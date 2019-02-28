@@ -5,5 +5,5 @@ export interface DocumentBase {
 	createdAt: Date
 	updatedAt: Date
 	version: number
-	isArchived?: boolean
+	deletedAt?: Date
 }
