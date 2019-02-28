@@ -1,6 +1,6 @@
 {
 	"name": "@jokio/monzo",
-	"version": "0.0.1",
+	"version": "0.0.0-semantic-release",
 	"author": "",
 	"description": "",
 	"main": "dist/index.js",
