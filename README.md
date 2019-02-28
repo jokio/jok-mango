@@ -12,6 +12,8 @@ Library will help to work with mongodb
 
 ✅ Every document has `createdAt` and `updatedAt` props
 
+✅ Soft Delete & Hard Delete ability for documents
+
 <br/>
 <br/>
 
