@@ -53,6 +53,6 @@ export default function updateFn<TDocument extends DocumentBase>(
 type Data<TDocument extends DocumentBase> =
 	Partial<Omit<TDocument, 'id' | 'createdAt' | 'updatedAt' | 'version'>>
 
-interface ExtendOptionProps {
+export interface ExtendOptionProps {
 	skipVersionUpdate?: boolean
 }
