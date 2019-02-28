@@ -1,11 +1,12 @@
 import { Db, ObjectId } from 'mongodb'
 import mapObject from '../common/mapObject'
 import { Omit } from '../common/omit'
-import { DocumentBase } from '../types'
+import { DocumentBase, ID, RepositoryOptions } from '../types'
 
 export default function createFn<TDocument extends DocumentBase>(
 	db: Db,
 	collectionName,
+	repositoryOptions?: RepositoryOptions,
 ) {
 	return async function create(
 		data: Data<TDocument>,
@@ -17,6 +18,7 @@ export default function createFn<TDocument extends DocumentBase>(
 		doc['_id'] = new ObjectId()
 		doc.createdAt = doc.createdAt || now
 		doc.updatedAt = now
+		doc.deletedAt = undefined
 		doc.version = 1
 
 		const {
@@ -29,9 +31,11 @@ export default function createFn<TDocument extends DocumentBase>(
 			throw new Error('CREATE_OPERATION_FAILED')
 		}
 
-		return <TDocument>mapObject(doc)
+		return repositoryOptions && repositoryOptions.skipIdTransformations
+			? doc
+			: <TDocument>mapObject(doc)
 	}
 }
 
 type Data<TDocument extends DocumentBase> =
-	Omit<TDocument, 'id' | 'createdAt' | 'updatedAt' | 'version'>
+	Omit<TDocument, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'deletedAt'> | { id?: ID }

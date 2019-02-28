@@ -1,7 +1,7 @@
 import { Db, FilterQuery, FindOneOptions } from 'mongodb'
-import mapFilter from '../common/mapFilter'
 import mapObject from '../common/mapObject'
-import { DocumentBase } from '../types'
+import transformIdFilter from '../common/transformIdFilter'
+import { DocumentBase, RepositoryOptions } from '../types'
 
 const defaultOptions: FindOneOptions = {
 	skip: 0,
@@ -11,21 +11,26 @@ const defaultOptions: FindOneOptions = {
 export default function queryFn<TDocument extends DocumentBase>(
 	db: Db,
 	collectionName,
+	repositoryOptions?: RepositoryOptions,
 ) {
 	return async function query(
 		filterQuery: FilterQuery<TDocument> = {},
 		options: FindOneOptions = defaultOptions,
 	): Promise<TDocument[]> {
 
-		const mongoFilter = mapFilter(filterQuery)
+		const mongoFilter = repositoryOptions && repositoryOptions.skipIdTransformations
+			? filterQuery
+			: transformIdFilter(filterQuery)
 
 		return db.collection(collectionName)
 			.find<TDocument>(mongoFilter, options)
 			.toArray()
-			.then(items => items
-				.map(mapObject)
-				.filter(x => !!x)
-				.map(x => <TDocument>x),
+			.then(items => repositoryOptions && repositoryOptions.skipIdTransformations
+				? items
+				: items
+					.map(mapObject)
+					.filter(x => !!x)
+					.map(x => <TDocument>x),
 			)
 	}
 }

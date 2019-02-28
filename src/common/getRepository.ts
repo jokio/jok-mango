@@ -4,17 +4,18 @@ import createFn from '../operations/create'
 import getFn from '../operations/get'
 import findFn from '../operations/query'
 import updateFn from '../operations/update'
-import { DocumentBase } from '../types'
+import { DocumentBase, RepositoryOptions } from '../types'
 
 export default function <TDocument extends DocumentBase>(
 	db: Db,
 	collectionName: string,
+	options?: RepositoryOptions,
 ) {
 	return {
-		create: createFn<TDocument>(db, collectionName),
-		get: getFn<TDocument>(db, collectionName),
-		query: findFn<TDocument>(db, collectionName),
-		update: updateFn<TDocument>(db, collectionName),
-		collection: collectionFn<TDocument>(db, collectionName),
+		create: createFn<TDocument>(db, collectionName, options),
+		get: getFn<TDocument>(db, collectionName, options),
+		query: findFn<TDocument>(db, collectionName, options),
+		update: updateFn<TDocument>(db, collectionName, options),
+		collection: collectionFn<TDocument>(db, collectionName, options),
 	}
 }

@@ -1,19 +1,29 @@
 import { Db, ObjectId } from 'mongodb'
 import mapObject from '../common/mapObject'
-import { DocumentBase, ID } from '../types'
+import { DocumentBase, ID, RepositoryOptions } from '../types'
 
 export default function getFn<TDocument extends DocumentBase>(
 	db: Db,
 	collectionName,
+	repositoryOptions?: RepositoryOptions,
 ) {
 	return async function get(id: ID): Promise<TDocument | null> {
 
-		const _id = new ObjectId(id)
+		let _id: ObjectId | undefined = new ObjectId(id)
+		let idParam: string | undefined
+
+		if (repositoryOptions && repositoryOptions.skipIdTransformations) {
+			_id = undefined
+			idParam = id
+		}
 
 		const doc = await db.collection(collectionName).findOne<TDocument>({
 			_id,
+			id: idParam,
 		})
 
-		return mapObject(doc)
+		return repositoryOptions && repositoryOptions.skipIdTransformations
+			? doc
+			: mapObject(doc)
 	}
 }

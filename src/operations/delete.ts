@@ -1,35 +1,36 @@
 import { Db, FilterQuery, FindOneAndUpdateOption } from 'mongodb'
-import { Omit } from '../common/omit'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
 
-export default function updateFn<TDocument extends DocumentBase>(
+export default function deleteFn<TDocument extends DocumentBase>(
 	db: Db,
 	collectionName,
 	repositoryOptions?: RepositoryOptions,
 ) {
-	return async function update(
+	return async function deleteOp(
 		filter: FilterQuery<TDocument>,
-		data: Data<TDocument>,
 		options?: FindOneAndUpdateOption & ExtendOptionProps,
 	): Promise<number> {
+
 		const now = new Date()
 
-		const doc: TDocument = <any>data
-
-		doc.updatedAt = now
-
-		const mongoFilter = repositoryOptions && repositoryOptions.skipIdTransformations
+		const mongoFilter = (repositoryOptions && repositoryOptions.skipIdTransformations)
 			? filter
 			: transformIdFilter(filter)
 
-		// remove version from updated fields
-		// it will be incremented by one
-		delete doc['_id']
-		delete doc.id
-		delete doc.version
-		delete doc.createdAt
-		delete doc.deletedAt
+		if (options && options.forceHardDelete) {
+
+			const {
+				result: { ok: hardDeleteOk },
+				deletedCount: hardDeletedCount,
+			} = await db.collection<TDocument>(collectionName).deleteMany(mongoFilter)
+
+			if (!hardDeleteOk) {
+				throw new Error('HARD_DELETE_DOCUMENTS_FAILED')
+			}
+
+			return hardDeletedCount || 0
+		}
 
 		// allow caller to skip version update
 		const version = options && options.skipVersionUpdate
@@ -42,23 +43,23 @@ export default function updateFn<TDocument extends DocumentBase>(
 		} = await db.collection<TDocument>(collectionName).updateMany(
 			mongoFilter,
 			{
-				$set: data,
+				$set: {
+					deletedAt: now,
+				},
 				$inc: { version },
 			},
 			options,
 		)
 
 		if (!ok) {
-			throw new Error('UPDATE_DOCUMENTS_FAILED')
+			throw new Error('SOFT_DELETE_DOCUMENTS_FAILED')
 		}
 
 		return modifiedCount
 	}
 }
 
-type Data<TDocument extends DocumentBase> =
-	Partial<Omit<TDocument, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'deletedAt'>>
-
 export interface ExtendOptionProps {
 	skipVersionUpdate?: boolean
+	forceHardDelete?: boolean
 }

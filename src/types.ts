@@ -7,3 +7,7 @@ export interface DocumentBase {
 	version: number
 	deletedAt?: Date
 }
+
+export interface RepositoryOptions {
+	skipIdTransformations?: boolean
+}
