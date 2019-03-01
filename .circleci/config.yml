@@ -7,7 +7,7 @@ version: 2
 jobs:
   install:
     <<: *defaults
-		steps:
+    steps:
       - checkout
       - run: yarn install
       - save_cache:
