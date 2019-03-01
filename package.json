@@ -10,6 +10,7 @@
 		"test": "node ./node_modules/jokio/dist/_test.js",
 		"dev": "nodemon",
 		"build": "tsc",
+		"lint": "tslint --project .",
 		"cleanup": "rm -fr dist/",
 		"prepublishOnly": "yarn build",
 		"postpack": "yarn cleanup"
