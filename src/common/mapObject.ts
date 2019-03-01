@@ -3,12 +3,13 @@ import { DocumentBase } from '../types'
 
 type Param<T> = T | null | undefined
 
-export default function <T extends DocumentBase>(_obj: Param<T>) {
-	const obj = <Param<T>>{ ..._obj }
+export default function <T extends DocumentBase>(doc: Param<T>) {
 
-	if (!obj) {
+	if (!doc) {
 		return null
 	}
+
+	const obj = { ...doc }
 
 	const _id: ObjectId = obj['_id']
 

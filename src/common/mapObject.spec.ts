@@ -17,4 +17,12 @@ describe('mapObject', () => {
 		expect(mapObject(<any>{ _id }))
 			.toEqual({ id: _id.toHexString() })
 	})
+
+	it('should return null if object is falsy', () => {
+		expect(mapObject(null))
+			.toBe(null)
+
+		expect(mapObject(undefined))
+			.toBe(null)
+	})
 })
