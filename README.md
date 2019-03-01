@@ -22,7 +22,7 @@ Simplified way to work with MongoDB
 1.  Declare data structure
 
 ```ts
-import { DocumentBase } from '@jokio/monzo'
+import { DocumentBase } from 'jok-mango'
 
 export interface User extends DocumentBase {
 	email: string
@@ -33,7 +33,7 @@ export interface User extends DocumentBase {
 
 2. Create repository object for declared type
 ```ts
-import { getRepository } from '@jokio/monzo'
+import { getRepository } from 'jok-mango'
 
 const connectionString = `mongodb://mongo:mongo@localhost:27017/test?authSource=admin`
 const client = new MongoClient(connectionString, { useNewUrlParser: true })
