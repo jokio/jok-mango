@@ -1,7 +1,11 @@
 import { ObjectId } from 'mongodb'
 import { DocumentBase } from '../types'
 
-export default function <T extends DocumentBase>(obj: T | null | undefined) {
+type Param<T> = T | null | undefined
+
+export default function <T extends DocumentBase>(_obj: Param<T>) {
+	const obj = <Param<T>>{ ..._obj }
+
 	if (!obj) {
 		return null
 	}
