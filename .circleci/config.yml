@@ -1,5 +1,4 @@
 defaults: &defaults
-  working_directory: ~/
   docker:
     - image: circleci/node:11
 
