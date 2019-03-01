@@ -2,7 +2,7 @@
 Simplified way to work with MongoDB
 
 [![platform: jokio](https://img.shields.io/badge/platform-%F0%9F%83%8F%20jok-44cc11.svg)](https://github.com/jokio/jok-cli)
-[![Coverage Status](https://coveralls.io/repos/github/jokio/jok-mango/badge.svg)](https://coveralls.io/github/jokio/jok-mango)
+[![codecov](https://codecov.io/gh/jokio/jok-mango/branch/master/graph/badge.svg)](https://codecov.io/gh/jokio/jok-mango)
 
 <br/>
 
