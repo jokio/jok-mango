@@ -65,6 +65,7 @@ const updatedUser = await users.update(
 )
 ```
 
+
 ## Performance Cost
 
 Library calls `_id.toHexString()` for all retrieved items to have `id: string` and make developers life easier, so logical quetion is: How expensive operation is it.
