@@ -1,19 +1,66 @@
+defaults: &defaults
+  working_directory: ~/
+  docker:
+    - image: circleci/node:11
+
 version: 2
 jobs:
-  build:
-    docker:
-      - image: circleci/node:11
-    steps:
+  install:
+    <<: *defaults
+		steps:
       - checkout
-      - run: sudo yarn global add semantic-release
       - run: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+
+  lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Lint
+          command: npm run lint-ci
+
+  test:
+    <<: *defaults
+    steps:
       - run: yarn test
+      - run:
+          name: Submit coverage
+          command: ./node_modules/.bin/codecov
+
+  publish:
+    <<: *defaults
+    steps:
+      - run: sudo yarn global add semantic-release
       - run: semantic-release
 
 workflows:
   version: 2
   main:
     jobs:
+      - install
       - build:
           context: deployment
+          requires:
+            - install
 
+workflows:
+  version: 2
+  test_and_lint:
+    jobs:
+      - install
+      - build:
+          requires:
+            - install
+      - lint:
+          requires:
+            - install
+      - test:
+          requires:
+            - install
+      - publish:
+          requires:
+            - install
