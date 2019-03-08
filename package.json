@@ -23,7 +23,7 @@
 		"mongodb": "^3.1.13"
 	},
 	"devDependencies": {
-		"@types/jest": "24.0.9",
+		"@types/jest": "24.0.10",
 		"@types/mongodb": "^3.1.19",
 		"@types/node": "11.10.0",
 		"bmocha": "^1.0.1",
