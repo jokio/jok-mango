@@ -462,10 +462,10 @@ binary-extensions@^1.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.13.0.tgz#9523e001306a32444b907423f1de2164222f6ab1"
   integrity sha512-EgmjVLMn22z7eGGv3kcnHwSnJXmFHjISTY9E/S5lIcTD3Oxw05QTcBLNkJFzcb3cNueUdF/IN4U+d78V0zO8Hw==
 
-bmocha@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/bmocha/-/bmocha-1.0.1.tgz#bd223f9c0875e408233df260b7c62535c9717b75"
-  integrity sha512-+G3VfsQcLi9k5TObEIkcq3p8Bh6WVLsuvB2CjuLFqiKMmxXOThFyAcPkGtvZsyN/jvIh81h2TSvYje2eiI9hmA==
+bmocha@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/bmocha/-/bmocha-2.0.1.tgz#0eb44f5dc492981bcd57598fbf140144f6fccebb"
+  integrity sha512-6HAHiHk9mceNEbFz4bRj04Rk8YBuRk0wLjdaI1x/u4pBJhH5O2zhwZUjVMezOKClHsHSRMngwe3ZPXvmr6zdhQ==
 
 boxen@^1.2.1:
   version "1.3.0"
