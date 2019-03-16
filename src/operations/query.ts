@@ -10,7 +10,7 @@ export default function queryFn<TDocument extends DocumentBase>(
 ) {
 	return async function query(
 		filterQuery: FilterQuery<TDocument> = {},
-		options: FindOneOptions,
+		options: FindOneOptions = {},
 	): Promise<TDocument[]> {
 
 		if (repositoryOptions && repositoryOptions.query) {
