@@ -3,11 +3,6 @@ import mapObject from '../common/mapObject'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
 
-const defaultOptions: FindOneOptions = {
-	skip: 0,
-	limit: 100,
-}
-
 export default function queryFn<TDocument extends DocumentBase>(
 	db: Db,
 	collectionName,
@@ -15,8 +10,28 @@ export default function queryFn<TDocument extends DocumentBase>(
 ) {
 	return async function query(
 		filterQuery: FilterQuery<TDocument> = {},
-		options: FindOneOptions = defaultOptions,
+		options: FindOneOptions,
 	): Promise<TDocument[]> {
+
+		if (repositoryOptions && repositoryOptions.query) {
+			if (repositoryOptions.query.defaultLimit) {
+				// tslint:disable-next-line
+				options = {
+					limit: repositoryOptions.query.defaultLimit,
+					...options,
+				}
+			}
+		}
+
+		if (repositoryOptions && repositoryOptions.delete) {
+			if (repositoryOptions.delete.enableSoftDeleteByDefault) {
+				// tslint:disable-next-line
+				filterQuery = {
+					deletedAt: { $eq: null },
+					...filterQuery,
+				}
+			}
+		}
 
 		const mongoFilter = repositoryOptions && repositoryOptions.skipIdTransformations
 			? filterQuery

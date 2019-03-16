@@ -10,4 +10,14 @@ export interface DocumentBase {
 
 export interface RepositoryOptions {
 	skipIdTransformations?: boolean
+	query?: QueryOptions
+	delete?: DeleteOptions
+}
+
+export interface QueryOptions {
+	defaultLimit: number
+}
+
+export interface DeleteOptions {
+	enableSoftDeleteByDefault: boolean
 }

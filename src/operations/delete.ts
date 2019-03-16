@@ -18,7 +18,10 @@ export default function deleteFn<TDocument extends DocumentBase>(
 			? filter
 			: transformIdFilter(filter)
 
-		if (options && options.forceHardDelete) {
+		const softDeleteEnabled = repositoryOptions && repositoryOptions.delete
+			&& repositoryOptions.delete.enableSoftDeleteByDefault
+
+		if (!softDeleteEnabled || (options && options.forceHardDelete)) {
 
 			const {
 				result: { ok: hardDeleteOk },
