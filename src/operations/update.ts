@@ -1,4 +1,5 @@
 import { Db, FilterQuery, FindOneAndUpdateOption, UpdateQuery } from 'mongodb'
+import mapObject from '../common/mapObject'
 import { Omit } from '../common/omit'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
@@ -64,7 +65,7 @@ export default function updateFn<TDocument extends DocumentBase>(
 			throw new Error('UPDATE_DOCUMENTS_FAILED')
 		}
 
-		return <TDocument>value
+		return <TDocument>mapObject(value)
 	}
 }
 

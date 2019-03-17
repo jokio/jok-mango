@@ -1,6 +1,7 @@
 import { Db } from 'mongodb'
 import collectionFn from '../operations/collection'
 import createFn from '../operations/create'
+import createManyFn from '../operations/createMany'
 import deleteFn from '../operations/delete'
 import getFn from '../operations/get'
 import findFn from '../operations/query'
@@ -15,6 +16,7 @@ export default function <TDocument extends DocumentBase>(
 ) {
 	return {
 		create: createFn<TDocument>(db, collectionName, options),
+		createMany: createManyFn<TDocument>(db, collectionName, options),
 		get: getFn<TDocument>(db, collectionName, options),
 		query: findFn<TDocument>(db, collectionName, options),
 		update: updateFn<TDocument>(db, collectionName, options),

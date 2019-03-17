@@ -3,12 +3,12 @@ import { Omit } from '../common/omit'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
 
-export default function updateFn<TDocument extends DocumentBase>(
+export default function updateManyFn<TDocument extends DocumentBase>(
 	db: Db,
 	collectionName,
 	repositoryOptions?: RepositoryOptions,
 ) {
-	return async function update(
+	return async function updateMany(
 		filter: FilterQuery<TDocument>,
 		data: Data<TDocument>,
 		options?: FindOneAndUpdateOption & ExtendOptionProps<Data<TDocument>>,
