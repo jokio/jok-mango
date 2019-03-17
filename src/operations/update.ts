@@ -1,4 +1,4 @@
-import { Db, FilterQuery, FindOneAndUpdateOption } from 'mongodb'
+import { Db, FilterQuery, FindOneAndUpdateOption, UpdateQuery } from 'mongodb'
 import { Omit } from '../common/omit'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
@@ -11,7 +11,7 @@ export default function updateFn<TDocument extends DocumentBase>(
 	return async function update(
 		filter: FilterQuery<TDocument>,
 		data: Data<TDocument>,
-		options?: FindOneAndUpdateOption & ExtendOptionProps,
+		options?: FindOneAndUpdateOption & ExtendOptionProps<Data<TDocument>>,
 	): Promise<number> {
 		const now = new Date()
 
@@ -36,6 +36,10 @@ export default function updateFn<TDocument extends DocumentBase>(
 			? 1
 			: 0
 
+		const updateQuery = options
+			? <any>options.updateQuery
+			: null
+
 		const {
 			result: { ok },
 			modifiedCount,
@@ -44,6 +48,7 @@ export default function updateFn<TDocument extends DocumentBase>(
 			{
 				$set: data,
 				$inc: { version },
+				...updateQuery,
 			},
 			options,
 		)
@@ -59,6 +64,7 @@ export default function updateFn<TDocument extends DocumentBase>(
 type Data<TDocument extends DocumentBase> =
 	Partial<Omit<TDocument, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'deletedAt'>>
 
-export interface ExtendOptionProps {
+export interface ExtendOptionProps<TDocument> {
 	skipVersionUpdate?: boolean
+	updateQuery?: UpdateQuery<TDocument>
 }
