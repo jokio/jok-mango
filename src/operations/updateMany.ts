@@ -12,7 +12,7 @@ export default function updateFn<TDocument extends DocumentBase>(
 		filter: FilterQuery<TDocument>,
 		data: Data<TDocument>,
 		options?: FindOneAndUpdateOption & ExtendOptionProps<Data<TDocument>>,
-	): Promise<TDocument> {
+	): Promise<number> {
 		const now = new Date()
 
 		const doc: TDocument = <any>data
@@ -22,10 +22,6 @@ export default function updateFn<TDocument extends DocumentBase>(
 		const mongoFilter = repositoryOptions && repositoryOptions.skipIdTransformations
 			? filter
 			: transformIdFilter(filter)
-
-		const returnUpdatedByDefault = repositoryOptions && repositoryOptions.update
-			? repositoryOptions.update.returnUpdatedByDefault
-			: undefined
 
 		// remove version from updated fields
 		// it will be incremented by one
@@ -45,26 +41,23 @@ export default function updateFn<TDocument extends DocumentBase>(
 			: null
 
 		const {
-			ok,
-			value,
-		} = await db.collection<TDocument>(collectionName).findOneAndUpdate(
+			result: { ok },
+			modifiedCount,
+		} = await db.collection<TDocument>(collectionName).updateMany(
 			mongoFilter,
 			{
 				$set: data,
 				$inc: { version },
 				...updateQuery,
 			},
-			{
-				returnOriginal: !returnUpdatedByDefault,
-				...options,
-			},
+			options,
 		)
 
 		if (!ok) {
 			throw new Error('UPDATE_DOCUMENTS_FAILED')
 		}
 
-		return <TDocument>value
+		return modifiedCount
 	}
 }
 

@@ -11,11 +11,16 @@ export interface DocumentBase {
 export interface RepositoryOptions {
 	skipIdTransformations?: boolean
 	query?: QueryOptions
+	update?: UpdateOptions
 	delete?: DeleteOptions
 }
 
 export interface QueryOptions {
 	defaultLimit: number
+}
+
+export interface UpdateOptions {
+	returnUpdatedByDefault: boolean
 }
 
 export interface DeleteOptions {
