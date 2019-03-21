@@ -20,7 +20,7 @@
 		"dist"
 	],
 	"dependencies": {
-		"mongodb": "3.1.13"
+		"mongodb": "3.2.1"
 	},
 	"devDependencies": {
 		"@types/jest": "24.0.11",
