@@ -10,7 +10,7 @@ export default function queryFn<TDocument extends DocumentBase>(
 ) {
 	return async function query(
 		filterQuery: FilterQuery<TDocument> = {},
-		options: FindOneOptions = {},
+		options: FindOneOptions & ExtendOptionProps = {},
 	): Promise<TDocument[]> {
 
 		if (repositoryOptions && repositoryOptions.query) {
@@ -23,7 +23,7 @@ export default function queryFn<TDocument extends DocumentBase>(
 			}
 		}
 
-		if (repositoryOptions && repositoryOptions.delete) {
+		if (!options.skipSoftDeletedFilter && repositoryOptions && repositoryOptions.delete) {
 			if (repositoryOptions.delete.enableSoftDeleteByDefault) {
 				// tslint:disable-next-line
 				filterQuery = {
@@ -48,4 +48,8 @@ export default function queryFn<TDocument extends DocumentBase>(
 					.map(x => <TDocument>x),
 			)
 	}
+}
+
+export interface ExtendOptionProps {
+	skipSoftDeletedFilter?: boolean
 }
