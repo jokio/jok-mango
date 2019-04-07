@@ -17,6 +17,12 @@ export default function <T extends DocumentBase>(filter: FilterQuery<T>) {
 				$in: ids.map(x => new ObjectId(x)),
 			}
 		}
+		else if (filter.id['$ne']) {
+			const ids = filter.id['$ne']
+			filter['_id'] = {
+				$ne: ids.map(x => new ObjectId(x)),
+			}
+		}
 		// otherwise please use collection
 		else {
 			throw new Error('id can\'t be complex object, please use collection')
