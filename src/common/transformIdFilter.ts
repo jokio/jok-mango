@@ -18,9 +18,9 @@ export default function <T extends DocumentBase>(filter: FilterQuery<T>) {
 			}
 		}
 		else if (filter.id['$ne']) {
-			const ids = filter.id['$ne']
+			const id = filter.id['$ne']
 			filter['_id'] = {
-				$ne: ids.map(x => new ObjectId(x)),
+				$ne: new ObjectId(id),
 			}
 		}
 		// otherwise please use collection
