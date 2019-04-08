@@ -28,7 +28,7 @@
 		"@types/node": "11.11.4",
 		"dotenv": "6.2.0",
 		"jest": "24.5.0",
-		"nodemon": "1.18.10",
+		"nodemon": "1.18.11",
 		"ts-jest": "24.0.0",
 		"ts-node": "8.0.3",
 		"tslint": "5.13.1",
