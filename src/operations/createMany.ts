@@ -29,7 +29,7 @@ export default function createManyFn<TDocument extends DocumentBase>(
 		} = await db.collection<TDocument>(collectionName).insertMany(docs)
 
 		if (!result.ok ||
-			(insertedCount !== 1)) {
+			(insertedCount !== data.length)) {
 			throw new Error('CREATE_OPERATION_FAILED')
 		}
 
