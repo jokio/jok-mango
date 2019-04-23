@@ -10,6 +10,14 @@ export default function createManyFn<TDocument extends DocumentBase>(
 	return async function createMany(
 		data: Data<TDocument>[],
 	): Promise<number> {
+		if (!data) {
+			throw new Error('Invalid argument: data, should be array')
+		}
+
+		if (!data.length) {
+			return 0
+		}
+
 		const now = new Date()
 
 		const docs = data
