@@ -11,19 +11,22 @@ export default function getFn<TDocument extends DocumentBase>(
 
 		let _id: ObjectId | undefined
 		let idParam: string | undefined
+		let doc: any
 
 		if (repositoryOptions && repositoryOptions.skipIdTransformations) {
-			_id = undefined
 			idParam = id
+
+			doc = await db.collection(collectionName).findOne<TDocument>({
+				id: idParam,
+			})
 		}
 		else {
 			_id = new ObjectId(id)
-		}
 
-		const doc = await db.collection(collectionName).findOne<TDocument>({
-			_id,
-			id: idParam,
-		})
+			doc = await db.collection(collectionName).findOne<TDocument>({
+				_id,
+			})
+		}
 
 		return repositoryOptions && repositoryOptions.skipIdTransformations
 			? doc
