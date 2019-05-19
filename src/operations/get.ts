@@ -9,12 +9,15 @@ export default function getFn<TDocument extends DocumentBase>(
 ) {
 	return async function get(id: ID): Promise<TDocument | null> {
 
-		let _id: ObjectId | undefined = new ObjectId(id)
+		let _id: ObjectId | undefined
 		let idParam: string | undefined
 
 		if (repositoryOptions && repositoryOptions.skipIdTransformations) {
 			_id = undefined
 			idParam = id
+		}
+		else {
+			_id = new ObjectId(id)
 		}
 
 		const doc = await db.collection(collectionName).findOne<TDocument>({
