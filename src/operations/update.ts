@@ -45,6 +45,8 @@ export default function updateFn<TDocument extends DocumentBase>(
 			? <any>options.updateQuery
 			: null
 
+		const session = (repositoryOptions && repositoryOptions.session) || undefined
+
 		const {
 			ok,
 			value,
@@ -58,6 +60,7 @@ export default function updateFn<TDocument extends DocumentBase>(
 			{
 				returnOriginal: !returnUpdatedByDefault,
 				...options,
+				session,
 			},
 		)
 

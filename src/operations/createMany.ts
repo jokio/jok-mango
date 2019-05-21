@@ -5,7 +5,7 @@ import { DocumentBase, ID, RepositoryOptions } from '../types'
 export default function createManyFn<TDocument extends DocumentBase>(
 	db: Db,
 	collectionName,
-	_repositoryOptions?: RepositoryOptions,
+	repositoryOptions?: RepositoryOptions,
 ) {
 	return async function createMany(
 		data: Data<TDocument>[],
@@ -31,10 +31,12 @@ export default function createManyFn<TDocument extends DocumentBase>(
 				...x,
 			})
 
+		const session = (repositoryOptions && repositoryOptions.session) || undefined
+
 		const {
 			result,
 			insertedCount,
-		} = await db.collection<TDocument>(collectionName).insertMany(docs)
+		} = await db.collection<TDocument>(collectionName).insertMany(docs, { session })
 
 		if (!result.ok ||
 			(insertedCount !== data.length)) {

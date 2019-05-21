@@ -21,12 +21,14 @@ export default function deleteFn<TDocument extends DocumentBase>(
 		const softDeleteEnabled = repositoryOptions && repositoryOptions.delete
 			&& repositoryOptions.delete.enableSoftDeleteByDefault
 
+		const session = (repositoryOptions && repositoryOptions.session) || undefined
+
 		if (!softDeleteEnabled || (options && options.forceHardDelete)) {
 
 			const {
 				result: { ok: hardDeleteOk },
 				deletedCount: hardDeletedCount,
-			} = await db.collection<TDocument>(collectionName).deleteMany(mongoFilter)
+			} = await db.collection<TDocument>(collectionName).deleteMany(mongoFilter, { session })
 
 			if (!hardDeleteOk) {
 				throw new Error('HARD_DELETE_DOCUMENTS_FAILED')
@@ -51,7 +53,10 @@ export default function deleteFn<TDocument extends DocumentBase>(
 				},
 				$inc: { version },
 			},
-			options,
+			{
+				...options,
+				session,
+			},
 		)
 
 		if (!ok) {

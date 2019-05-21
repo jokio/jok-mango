@@ -37,8 +37,10 @@ export default function queryFn<TDocument extends DocumentBase>(
 			? filterQuery
 			: transformIdFilter(filterQuery)
 
+		const session = (repositoryOptions && repositoryOptions.session) || undefined
+
 		return db.collection(collectionName)
-			.find<TDocument>(mongoFilter, options)
+			.find<TDocument>(mongoFilter, { ...options, session })
 			.toArray()
 			.then(items => repositoryOptions && repositoryOptions.skipIdTransformations
 				? items

@@ -40,6 +40,8 @@ export default function updateManyFn<TDocument extends DocumentBase>(
 			? <any>options.updateQuery
 			: null
 
+		const session = (repositoryOptions && repositoryOptions.session) || undefined
+
 		const {
 			result: { ok },
 			modifiedCount,
@@ -50,7 +52,10 @@ export default function updateManyFn<TDocument extends DocumentBase>(
 				$inc: { version },
 				...updateQuery,
 			},
-			options,
+			{
+				...options,
+				session,
+			},
 		)
 
 		if (!ok) {

@@ -1,3 +1,5 @@
+import { ClientSession } from 'mongodb'
+
 export type ID = string
 
 export interface DocumentBase {
@@ -9,6 +11,7 @@ export interface DocumentBase {
 }
 
 export interface RepositoryOptions {
+	session?: ClientSession
 	skipIdTransformations?: boolean
 	query?: QueryOptions
 	update?: UpdateOptions

@@ -21,10 +21,12 @@ export default function createFn<TDocument extends DocumentBase>(
 		doc.deletedAt = undefined
 		doc.version = 1
 
+		const session = (repositoryOptions && repositoryOptions.session) || undefined
+
 		const {
 			result,
 			insertedCount,
-		} = await db.collection<TDocument>(collectionName).insertOne(doc)
+		} = await db.collection<TDocument>(collectionName).insertOne(doc, { session })
 
 		if (!result.ok ||
 			(insertedCount !== 1)) {
