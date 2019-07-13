@@ -3,7 +3,7 @@ Simplified way to work with MongoDB
 
 [![platform: jokio](https://img.shields.io/badge/platform-%F0%9F%83%8F%20jok-44cc11.svg)](https://github.com/jokio/jok-cli)
 [![npm version](https://badge.fury.io/js/jok-mango.svg)](https://badge.fury.io/js/jok-mango)
-[![codecov](https://codecov.io/gh/jokio/jok-mango/branch/master/graph/badge.svg)](https://codecov.io/gh/jokio/jok-mango) [![Greenkeeper badge](https://badges.greenkeeper.io/jokio/jok-mango.svg)](https://greenkeeper.io/)
+[![codecov](https://codecov.io/gh/jokio/jok-mango/branch/master/graph/badge.svg)](https://codecov.io/gh/jokio/jok-mango)
 
 <br/>
 
