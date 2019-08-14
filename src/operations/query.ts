@@ -39,8 +39,8 @@ export default function queryFn<TDocument extends DocumentBase>(
 			: transformIdFilter(filterQuery)
 
 		const mongoFilter = repositoryOptions && repositoryOptions.enableIdMapping
-			? filter1
-			: mapIdFilter(filter1)
+			? mapIdFilter(filter1)
+			: filter1
 
 		const session = (repositoryOptions && repositoryOptions.session) || undefined
 
@@ -54,7 +54,7 @@ export default function queryFn<TDocument extends DocumentBase>(
 					.filter(x => !!x)
 					.map(x => <TDocument>x),
 			)
-			.then(items => repositoryOptions && repositoryOptions.enableIdMapping
+			.then(items => repositoryOptions && !repositoryOptions.enableIdMapping
 				? items
 				: items
 					.map(mapObject)

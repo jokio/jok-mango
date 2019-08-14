@@ -34,7 +34,7 @@ export default function createFn<TDocument extends DocumentBase>(
 		}
 
 		return (repositoryOptions &&
-			(repositoryOptions.skipIdTransformations || repositoryOptions.enableIdMapping))
+			(repositoryOptions.skipIdTransformations || !repositoryOptions.enableIdMapping))
 			? doc
 			: <TDocument>mapObject(doc)
 	}
