@@ -1,4 +1,5 @@
 import { Db, FilterQuery, FindOneAndUpdateOption } from 'mongodb'
+import mapIdFilter from '../common/mapIdFilter'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
 
@@ -20,7 +21,7 @@ export default function deleteFn<TDocument extends DocumentBase>(
 
 		const mongoFilter = (repositoryOptions && repositoryOptions.enableIdMapping)
 			? filter1
-			: transformIdFilter(filter1)
+			: mapIdFilter(filter1)
 
 		const softDeleteEnabled = repositoryOptions && repositoryOptions.delete
 			&& repositoryOptions.delete.enableSoftDeleteByDefault

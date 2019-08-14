@@ -1,4 +1,5 @@
 import { Db, FilterQuery, FindOneOptions } from 'mongodb'
+import mapIdFilter from '../common/mapIdFilter'
 import mapObject from '../common/mapObject'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
@@ -39,7 +40,7 @@ export default function queryFn<TDocument extends DocumentBase>(
 
 		const mongoFilter = repositoryOptions && repositoryOptions.enableIdMapping
 			? filter1
-			: transformIdFilter(filter1)
+			: mapIdFilter(filter1)
 
 		const session = (repositoryOptions && repositoryOptions.session) || undefined
 

@@ -1,4 +1,5 @@
 import { Db, FilterQuery, FindOneAndUpdateOption, UpdateQuery } from 'mongodb'
+import mapIdFilter from '../common/mapIdFilter'
 import { Omit } from '../common/omit'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
@@ -25,7 +26,7 @@ export default function updateManyFn<TDocument extends DocumentBase>(
 
 		const mongoFilter = repositoryOptions && repositoryOptions.enableIdMapping
 			? filter1
-			: transformIdFilter(filter1)
+			: mapIdFilter(filter1)
 
 		// remove version from updated fields
 		// it will be incremented by one
