@@ -1,9 +1,9 @@
 import { Db, FilterQuery, FindOneAndUpdateOption, UpdateQuery } from 'mongodb'
+import mapIdFilter from '../common/mapIdFilter'
 import mapObject from '../common/mapObject'
 import { Omit } from '../common/omit'
 import transformIdFilter from '../common/transformIdFilter'
 import { DocumentBase, RepositoryOptions } from '../types'
-import mapIdFilter from '../common/mapIdFilter';
 
 export default function updateFn<TDocument extends DocumentBase>(
 	db: Db,
