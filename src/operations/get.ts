@@ -36,7 +36,7 @@ export default function getFn<TDocument extends DocumentBase>(
 		}
 
 		return (repositoryOptions &&
-			(repositoryOptions.skipIdTransformations || !repositoryOptions.enableIdMapping))
+			(repositoryOptions.skipIdTransformations && !repositoryOptions.enableIdMapping))
 			? doc
 			: mapObject(doc)
 	}
