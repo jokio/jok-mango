@@ -20,9 +20,13 @@ export default function updateFn<TDocument extends DocumentBase>(
 
 		doc.updatedAt = now
 
-		const mongoFilter = repositoryOptions && repositoryOptions.skipIdTransformations
+		const filter1 = repositoryOptions && repositoryOptions.skipIdTransformations
 			? filter
 			: transformIdFilter(filter)
+
+		const mongoFilter = repositoryOptions && repositoryOptions.enableIdMapping
+			? filter1
+			: transformIdFilter(filter1)
 
 		const returnUpdatedByDefault = repositoryOptions && repositoryOptions.update
 			? repositoryOptions.update.returnUpdatedByDefault

@@ -33,7 +33,8 @@ export default function createFn<TDocument extends DocumentBase>(
 			throw new Error('CREATE_OPERATION_FAILED')
 		}
 
-		return repositoryOptions && repositoryOptions.skipIdTransformations
+		return (repositoryOptions &&
+			(repositoryOptions.skipIdTransformations || repositoryOptions.enableIdMapping))
 			? doc
 			: <TDocument>mapObject(doc)
 	}

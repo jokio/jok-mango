@@ -33,9 +33,13 @@ export default function queryFn<TDocument extends DocumentBase>(
 			}
 		}
 
-		const mongoFilter = repositoryOptions && repositoryOptions.skipIdTransformations
+		const filter1 = repositoryOptions && repositoryOptions.skipIdTransformations
 			? filterQuery
 			: transformIdFilter(filterQuery)
+
+		const mongoFilter = repositoryOptions && repositoryOptions.enableIdMapping
+			? filter1
+			: transformIdFilter(filter1)
 
 		const session = (repositoryOptions && repositoryOptions.session) || undefined
 
@@ -43,6 +47,13 @@ export default function queryFn<TDocument extends DocumentBase>(
 			.find<TDocument>(mongoFilter, { ...options, session })
 			.toArray()
 			.then(items => repositoryOptions && repositoryOptions.skipIdTransformations
+				? items
+				: items
+					.map(mapObject)
+					.filter(x => !!x)
+					.map(x => <TDocument>x),
+			)
+			.then(items => repositoryOptions && repositoryOptions.enableIdMapping
 				? items
 				: items
 					.map(mapObject)

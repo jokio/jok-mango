@@ -19,9 +19,13 @@ export default function updateManyFn<TDocument extends DocumentBase>(
 
 		doc.updatedAt = now
 
-		const mongoFilter = repositoryOptions && repositoryOptions.skipIdTransformations
+		const filter1 = repositoryOptions && repositoryOptions.skipIdTransformations
 			? filter
 			: transformIdFilter(filter)
+
+		const mongoFilter = repositoryOptions && repositoryOptions.enableIdMapping
+			? filter1
+			: transformIdFilter(filter1)
 
 		// remove version from updated fields
 		// it will be incremented by one

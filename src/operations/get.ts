@@ -16,10 +16,15 @@ export default function getFn<TDocument extends DocumentBase>(
 		const session = (repositoryOptions && repositoryOptions.session) || undefined
 
 		if (repositoryOptions && repositoryOptions.skipIdTransformations) {
+
 			idParam = id
 
+			const filter = (repositoryOptions && repositoryOptions.enableIdMapping)
+				? { _id: idParam }
+				: { id: idParam }
+
 			doc = await db.collection(collectionName).findOne<TDocument>({
-				id: idParam,
+				...filter,
 			}, { session })
 		}
 		else {
@@ -30,7 +35,8 @@ export default function getFn<TDocument extends DocumentBase>(
 			}, { session })
 		}
 
-		return repositoryOptions && repositoryOptions.skipIdTransformations
+		return (repositoryOptions &&
+			(repositoryOptions.skipIdTransformations || repositoryOptions.enableIdMapping))
 			? doc
 			: mapObject(doc)
 	}

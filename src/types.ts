@@ -13,6 +13,7 @@ export interface DocumentBase {
 export interface RepositoryOptions {
 	session?: ClientSession
 	skipIdTransformations?: boolean
+	enableIdMapping?: boolean
 	query?: QueryOptions
 	update?: UpdateOptions
 	delete?: DeleteOptions

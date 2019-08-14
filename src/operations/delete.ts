@@ -14,9 +14,13 @@ export default function deleteFn<TDocument extends DocumentBase>(
 
 		const now = new Date()
 
-		const mongoFilter = (repositoryOptions && repositoryOptions.skipIdTransformations)
+		const filter1 = (repositoryOptions && repositoryOptions.skipIdTransformations)
 			? filter
 			: transformIdFilter(filter)
+
+		const mongoFilter = (repositoryOptions && repositoryOptions.enableIdMapping)
+			? filter1
+			: transformIdFilter(filter1)
 
 		const softDeleteEnabled = repositoryOptions && repositoryOptions.delete
 			&& repositoryOptions.delete.enableSoftDeleteByDefault
