@@ -17,7 +17,10 @@ export interface RepositoryOptions {
 	query?: QueryOptions
 	update?: UpdateOptions
 	delete?: DeleteOptions
+	logger?: MangoLogger
 }
+
+export type MangoLogger = (collectionName: string, action: string, duration: number) => void
 
 export interface QueryOptions {
 	defaultLimit: number

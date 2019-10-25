@@ -14,6 +14,8 @@ export default function queryFn<TDocument extends DocumentBase>(
 		options: FindOneOptions & ExtendOptionProps = {},
 	): Promise<TDocument[]> {
 
+		const now = new Date()
+
 		if (repositoryOptions && repositoryOptions.query) {
 			if (repositoryOptions.query.defaultLimit) {
 				// tslint:disable-next-line
@@ -61,6 +63,16 @@ export default function queryFn<TDocument extends DocumentBase>(
 					.filter(x => !!x)
 					.map(x => <TDocument>x),
 			)
+			.then(result => {
+
+				if (repositoryOptions && repositoryOptions.logger) {
+					const duration = Date.now() - now.getTime()
+
+					repositoryOptions.logger(collectionName, 'query', duration)
+				}
+
+				return result
+			})
 	}
 }
 

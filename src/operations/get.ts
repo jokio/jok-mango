@@ -13,6 +13,8 @@ export default function getFn<TDocument extends DocumentBase>(
 		let idParam: string | undefined
 		let doc: any
 
+		const now = new Date()
+
 		const session = (repositoryOptions && repositoryOptions.session) || undefined
 
 		if (repositoryOptions && repositoryOptions.skipIdTransformations) {
@@ -33,6 +35,12 @@ export default function getFn<TDocument extends DocumentBase>(
 			doc = await db.collection(collectionName).findOne<TDocument>({
 				_id,
 			}, { session })
+		}
+
+		if (repositoryOptions && repositoryOptions.logger) {
+			const duration = Date.now() - now.getTime()
+
+			repositoryOptions.logger(collectionName, 'get', duration)
 		}
 
 		return (repositoryOptions &&

@@ -43,6 +43,12 @@ export default function createManyFn<TDocument extends DocumentBase>(
 			throw new Error('CREATE_OPERATION_FAILED')
 		}
 
+		if (repositoryOptions && repositoryOptions.logger) {
+			const duration = Date.now() - now.getTime()
+
+			repositoryOptions.logger(collectionName, 'createMany', duration)
+		}
+
 		return insertedCount
 	}
 }

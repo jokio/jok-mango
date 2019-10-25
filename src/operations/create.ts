@@ -33,6 +33,12 @@ export default function createFn<TDocument extends DocumentBase>(
 			throw new Error('CREATE_OPERATION_FAILED')
 		}
 
+		if (repositoryOptions && repositoryOptions.logger) {
+			const duration = Date.now() - now.getTime()
+
+			repositoryOptions.logger(collectionName, 'create', duration)
+		}
+
 		return (repositoryOptions &&
 			(repositoryOptions.skipIdTransformations && !repositoryOptions.enableIdMapping))
 			? doc

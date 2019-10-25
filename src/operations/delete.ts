@@ -68,6 +68,12 @@ export default function deleteFn<TDocument extends DocumentBase>(
 			throw new Error('SOFT_DELETE_DOCUMENTS_FAILED')
 		}
 
+		if (repositoryOptions && repositoryOptions.logger) {
+			const duration = Date.now() - now.getTime()
+
+			repositoryOptions.logger(collectionName, 'delete', duration)
+		}
+
 		return modifiedCount
 	}
 }

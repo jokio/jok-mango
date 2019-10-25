@@ -73,6 +73,12 @@ export default function updateFn<TDocument extends DocumentBase>(
 			throw new Error('UPDATE_DOCUMENTS_FAILED')
 		}
 
+		if (repositoryOptions && repositoryOptions.logger) {
+			const duration = Date.now() - now.getTime()
+
+			repositoryOptions.logger(collectionName, 'update', duration)
+		}
+
 		return <TDocument>mapObject(value)
 	}
 }
