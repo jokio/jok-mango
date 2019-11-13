@@ -52,7 +52,7 @@ export default function deleteFn<TDocument extends DocumentBase>(
 			modifiedCount,
 		} = await db.collection<TDocument>(collectionName).updateMany(
 			mongoFilter,
-			{
+			<any>{
 				$set: {
 					deletedAt: <any>now,
 				},
