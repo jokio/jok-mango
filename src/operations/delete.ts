@@ -43,7 +43,7 @@ export default function deleteFn<TDocument extends DocumentBase>(
 		}
 
 		// allow caller to skip version update
-		const version = options && options.skipVersionUpdate
+		const version: any = options && options.skipVersionUpdate
 			? 1
 			: 0
 
@@ -54,7 +54,7 @@ export default function deleteFn<TDocument extends DocumentBase>(
 			mongoFilter,
 			{
 				$set: {
-					deletedAt: now,
+					deletedAt: <any>now,
 				},
 				$inc: { version },
 			},
