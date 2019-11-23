@@ -1,5 +1,6 @@
 import { Db } from 'mongodb'
 import collectionFn from '../operations/collection'
+import countFn from '../operations/count'
 import createFn from '../operations/create'
 import createManyFn from '../operations/createMany'
 import deleteFn from '../operations/delete'
@@ -22,6 +23,7 @@ export default function <TDocument extends DocumentBase>(
 		update: updateFn<TDocument>(db, collectionName, options),
 		updateMany: updateManyFn<TDocument>(db, collectionName, options),
 		delete: deleteFn<TDocument>(db, collectionName, options),
+		count: countFn<TDocument>(db, collectionName, options),
 		collection: collectionFn<TDocument>(db, collectionName, options),
 	}
 }
