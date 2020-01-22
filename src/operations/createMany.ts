@@ -23,7 +23,7 @@ export default function createManyFn<TDocument extends DocumentBase>(
 		const docs = data
 			.map(x => <TDocument>x)
 			.map(x => <TDocument><any>{
-				_id: new ObjectId(),
+				_id: new ObjectId(x.id || undefined),
 				createdAt: x.createdAt || now,
 				updatedAt: now,
 				deletedAt: undefined,

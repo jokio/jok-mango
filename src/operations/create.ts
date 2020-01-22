@@ -15,7 +15,7 @@ export default function createFn<TDocument extends DocumentBase>(
 
 		const doc = <TDocument>data
 
-		doc['_id'] = new ObjectId()
+		doc['_id'] = new ObjectId(doc.id || undefined)
 		doc.createdAt = doc.createdAt || now
 		doc.updatedAt = now
 		doc.deletedAt = undefined
