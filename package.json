@@ -32,7 +32,7 @@
 		"ts-jest": "24.0.0",
 		"ts-node": "8.0.3",
 		"tslint": "5.13.1",
-		"typescript": "3.3.3333"
+		"typescript": "3.8.3"
 	},
 	"resolutions": {
 		"**/event-stream": "^4.0.1"

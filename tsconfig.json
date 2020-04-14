@@ -14,14 +14,7 @@
 		"noUnusedParameters": true,
 		"strict": true,
 		"outDir": "dist",
-		"lib": [
-			"esnext"
-		]
+		"lib": ["esnext"]
 	},
-	"exclude": [
-		"node_modules",
-		"examples",
-		"dist",
-		"tests"
-	]
+	"exclude": ["node_modules", "examples", "dist", "tests"]
 }
