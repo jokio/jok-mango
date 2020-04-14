@@ -7,9 +7,7 @@ export default function createManyFn<TDocument extends DocumentBase>(
 	collectionName,
 	repositoryOptions?: RepositoryOptions,
 ) {
-	return async function createMany(
-		data: Data<TDocument>[],
-	): Promise<number> {
+	return async function createMany(data: Data<TDocument>[]): Promise<number> {
 		if (!data) {
 			throw new Error('Invalid argument: data, should be array')
 		}
@@ -21,25 +19,28 @@ export default function createManyFn<TDocument extends DocumentBase>(
 		const now = new Date()
 
 		const docs = data
-			.map(x => <TDocument>x)
-			.map(x => <TDocument><any>{
-				_id: new ObjectId(x.id || undefined),
-				createdAt: x.createdAt || now,
-				updatedAt: now,
-				deletedAt: undefined,
-				version: 1,
-				...x,
-			})
+			.map((x) => <TDocument>x)
+			.map(
+				(x) => <TDocument>(<any>{
+						_id: repositoryOptions?.skipIdTransformations
+							? x.id
+							: new ObjectId(x.id || undefined),
+						createdAt: x.createdAt || now,
+						updatedAt: now,
+						deletedAt: undefined,
+						version: 1,
+						...x,
+					}),
+			)
 
-		const session = (repositoryOptions && repositoryOptions.session) || undefined
+		const session =
+			(repositoryOptions && repositoryOptions.session) || undefined
 
-		const {
-			result,
-			insertedCount,
-		} = await db.collection<TDocument>(collectionName).insertMany(docs, { session })
+		const { result, insertedCount } = await db
+			.collection<TDocument>(collectionName)
+			.insertMany(docs, { session })
 
-		if (!result.ok ||
-			(insertedCount !== data.length)) {
+		if (!result.ok || insertedCount !== data.length) {
 			throw new Error('CREATE_OPERATION_FAILED')
 		}
 
@@ -54,4 +55,5 @@ export default function createManyFn<TDocument extends DocumentBase>(
 }
 
 type Data<TDocument extends DocumentBase> =
-	Omit<TDocument, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'deletedAt'> | { id?: ID }
+	| Omit<TDocument, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'deletedAt'>
+	| { id?: ID }

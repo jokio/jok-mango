@@ -1,0 +1,26 @@
+# Add files here to ignore them from prettier formatting
+dist/**/*
+out/**/*
+generated/**/*
+**/*.gen.*
+node_modules/**/*
+coverage/**/*
+*.snap
+
+*.sh
+*.png
+*.ico
+*.icns
+*.svg
+*.txt
+
+**/.gitignore
+**/.gitkeep
+**/.git
+**/.DS_Store
+**/.prettier*
+**/.env*
+**/.nvm
+**/*.conf
+**/browserslist
+.vscode/
