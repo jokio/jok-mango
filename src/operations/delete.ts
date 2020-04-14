@@ -12,28 +12,33 @@ export default function deleteFn<TDocument extends DocumentBase>(
 		filter: FilterQuery<TDocument>,
 		options?: FindOneAndUpdateOption & ExtendOptionProps,
 	): Promise<number> {
-
 		const now = new Date()
 
-		const filter1 = (repositoryOptions && repositoryOptions.skipIdTransformations)
-			? filter
-			: transformIdFilter(filter)
+		const filter1 =
+			repositoryOptions && repositoryOptions.skipIdTransformations
+				? filter
+				: transformIdFilter(filter)
 
-		const mongoFilter = (repositoryOptions && repositoryOptions.enableIdMapping)
-			? mapIdFilter(filter1)
-			: filter1
+		const mongoFilter =
+			repositoryOptions && repositoryOptions.enableIdMapping
+				? mapIdFilter(filter1)
+				: filter1
 
-		const softDeleteEnabled = repositoryOptions && repositoryOptions.delete
-			&& repositoryOptions.delete.enableSoftDeleteByDefault
+		const softDeleteEnabled =
+			repositoryOptions &&
+			repositoryOptions.delete &&
+			repositoryOptions.delete.enableSoftDeleteByDefault
 
-		const session = (repositoryOptions && repositoryOptions.session) || undefined
+		const session =
+			(repositoryOptions && repositoryOptions.session) || undefined
 
 		if (!softDeleteEnabled || (options && options.forceHardDelete)) {
-
 			const {
 				result: { ok: hardDeleteOk },
 				deletedCount: hardDeletedCount,
-			} = await db.collection<TDocument>(collectionName).deleteMany(mongoFilter, { session })
+			} = await db
+				.collection<TDocument>(collectionName)
+				.deleteMany(mongoFilter, { session })
 
 			if (!hardDeleteOk) {
 				throw new Error('HARD_DELETE_DOCUMENTS_FAILED')
@@ -43,9 +48,7 @@ export default function deleteFn<TDocument extends DocumentBase>(
 		}
 
 		// allow caller to skip version update
-		const version: any = options && options.skipVersionUpdate
-			? 1
-			: 0
+		const version: any = options && options.skipVersionUpdate ? 1 : 0
 
 		const {
 			result: { ok },
