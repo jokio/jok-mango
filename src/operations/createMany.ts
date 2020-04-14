@@ -23,7 +23,7 @@ export default function createManyFn<TDocument extends DocumentBase>(
 			.map(
 				(x) => <TDocument>(<any>{
 						_id: repositoryOptions?.skipIdTransformations
-							? x.id
+							? x.id || new ObjectId().toHexString()
 							: new ObjectId(x.id || undefined),
 						createdAt: x.createdAt || now,
 						updatedAt: now,

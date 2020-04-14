@@ -14,7 +14,7 @@ export default function createFn<TDocument extends DocumentBase>(
 		const doc = <TDocument>data
 
 		doc['_id'] = repositoryOptions?.skipIdTransformations
-			? doc.id
+			? doc.id || new ObjectId().toHexString()
 			: new ObjectId(doc.id || undefined)
 
 		doc.createdAt = doc.createdAt || now
