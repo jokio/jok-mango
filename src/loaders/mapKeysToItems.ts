@@ -1,9 +1,8 @@
 import { DocumentBase } from '../types'
 
-export const mapKeysToItems = (keys: readonly string[]) => <
-	T extends DocumentBase
->(
-	items: T[],
-) => {
-	return keys.map((id) => <T>items.find((x) => x.id === id) || null)
+export const mapKeysToItems = <T extends DocumentBase>(
+	keys: readonly string[],
+	getKey: (item: T) => string = (x) => x.id,
+) => (items: T[]) => {
+	return keys.map((key) => <T>items.find((x) => getKey(x) === key) || null)
 }
