@@ -4,7 +4,6 @@ import { DocumentBase } from '../types'
 type Param<T> = T | null | undefined
 
 export default function <T extends DocumentBase>(doc: Param<T>) {
-
 	if (!doc) {
 		return null
 	}
@@ -14,10 +13,12 @@ export default function <T extends DocumentBase>(doc: Param<T>) {
 	const _id: ObjectId = obj['_id']
 
 	if (_id) {
-		if (_id instanceof ObjectId) {
+		if (
+			Reflect.has(_id, '_bsontype') &&
+			_id._bsontype.toLocaleLowerCase() === 'objectid'
+		) {
 			obj.id = _id.toHexString()
-		}
-		else {
+		} else {
 			obj.id = _id
 		}
 
