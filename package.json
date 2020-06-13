@@ -19,8 +19,8 @@
 	"files": [
 		"dist"
 	],
-	"dependencies": {
-		"mongodb": "3.3.4"
+	"peerDependencies": {
+		"mongodb": "~3.5.9"
 	},
 	"devDependencies": {
 		"@types/jest": "24.0.23",
