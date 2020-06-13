@@ -12,8 +12,8 @@ export default function <T extends DocumentBase>(filter: FilterQuery<T>) {
 		}
 		// if id is already an objectId
 		else if (
-			Reflect.has(filter.id, '_bsontype') &&
-			filter.id._bsontype === 'ObjectID'
+			Reflect.has(filter.id as object, '_bsontype') &&
+			(filter.id as any)._bsontype === 'ObjectID'
 		) {
 			const filterAny = filter as any
 			filterAny['_id'] = filter.id

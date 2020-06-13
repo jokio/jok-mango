@@ -15,11 +15,11 @@ export default function <T extends DocumentBase>(doc: Param<T>) {
 	if (_id) {
 		if (
 			Reflect.has(_id, '_bsontype') &&
-			_id._bsontype.toLocaleLowerCase() === 'objectid'
+			(_id as any)._bsontype.toLocaleLowerCase() === 'objectid'
 		) {
 			obj.id = _id.toHexString()
 		} else {
-			obj.id = _id
+			obj.id = _id as any
 		}
 
 		delete obj['_id']
