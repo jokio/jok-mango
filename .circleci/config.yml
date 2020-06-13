@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
       - run: sudo yarn global add semantic-release
-      - run: yarn install
+      - run: yarn install --ignore-optional
       - run: yarn lint
       - run: yarn test-ci
       - run: yarn add codecov
@@ -19,4 +19,3 @@ workflows:
     jobs:
       - build:
           context: deployment
-
