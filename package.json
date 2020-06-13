@@ -23,6 +23,7 @@
 		"mongodb": "~3.5.9"
 	},
 	"devDependencies": {
+		"mongodb": "~3.5.9",
 		"@types/jest": "24.0.23",
 		"@types/mongodb": "3.3.10",
 		"@types/node": "11.11.4",
@@ -35,7 +36,8 @@
 		"typescript": "3.8.3"
 	},
 	"resolutions": {
-		"**/event-stream": "^4.0.1"
+		"**/event-stream": "^4.0.1",
+		"**/fsevents": ">=1.2.4"
 	},
 	"release": {
 		"branch": "master"

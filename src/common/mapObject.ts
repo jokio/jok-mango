@@ -14,6 +14,7 @@ export default function <T extends DocumentBase>(doc: Param<T>) {
 
 	if (_id) {
 		if (
+			typeof _id === 'object' &&
 			Reflect.has(_id, '_bsontype') &&
 			(_id as any)._bsontype.toLocaleLowerCase() === 'objectid'
 		) {
