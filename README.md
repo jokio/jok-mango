@@ -1,4 +1,5 @@
 # jok-mango [![CircleCI](https://circleci.com/gh/jokio/jok-mango.svg?style=svg)](https://circleci.com/gh/jokio/jok-mango)
+
 Simplified way to work with MongoDB
 
 [![platform: jokio](https://img.shields.io/badge/platform-%F0%9F%83%8F%20jok-44cc11.svg)](https://github.com/jokio/jok-cli)
@@ -7,9 +8,9 @@ Simplified way to work with MongoDB
 
 <br/>
 
-
 ## Features
-✅ Stores `_id: ObjectId` field, but wraps it to the `id: string` 
+
+✅ Stores `_id: ObjectId` field, but wraps it to the `id: string`
 
 ✅ Documents have `version: number` out of the box, and its increased by `1` every time you call update
 
@@ -18,9 +19,11 @@ Simplified way to work with MongoDB
 ✅ Soft Delete & Hard Delete ability for documents
 
 <br/>
+
 <br/>
 
 ## How to use
+
 1.  Declare data structure
 
 ```ts
@@ -34,6 +37,7 @@ export interface User extends DocumentBase {
 ```
 
 2. Create repository object for declared type
+
 ```ts
 import { getRepository } from 'jok-mango'
 
@@ -47,14 +51,13 @@ const db = client.db()
 const users = getRepository<User>(db, 'users')
 ```
 
-
 3. Use repository object
+
 ```ts
 const user = await users.create({
 	email: 'test@jok.io',
 	passwordHash: 'strong-hash',
 })
-
 
 const { id, version } = user
 
@@ -66,7 +69,6 @@ const updatedUser = await users.update(
 )
 ```
 
-
 ## Performance Cost
 
 Library calls `_id.toHexString()` for all retrieved items to have `id: string` and make developers life easier, so logical quetion is: How expensive operation is it.
@@ -75,8 +77,8 @@ _Hardware:
 MacBook Pro (Retina, 15-inch, Mid 2014)
 Processor: 2.2 GHz Intel Core i7_
 
-| Number of Operations 	| Duration 			|
-|---------------------: |----------------	|
-| 1                     | ~20 μs          |
-| 1 000                 | ~829 μs         |
-| 1 000 000             | ~250 ms        	|
+| Number of Operations | Duration |
+| -------------------: | -------- |
+|                    1 | ~20 μs   |
+|                1 000 | ~829 μs  |
+|            1 000 000 | ~250 ms  |
