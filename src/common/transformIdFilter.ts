@@ -10,6 +10,14 @@ export default function <T extends DocumentBase>(filter: FilterQuery<T>) {
 			const filterAny = filter as any
 			filterAny['_id'] = new ObjectId(filter.id)
 		}
+		// if id is already an objectId
+		else if (
+			Reflect.has(filter.id, '_bsontype') &&
+			filter.id._bsontype === 'ObjectID'
+		) {
+			const filterAny = filter as any
+			filterAny['_id'] = filter.id
+		}
 		// if $in is used
 		else if (filter.id['$in'] && Array.isArray(filter.id['$in'])) {
 			const ids = filter.id['$in']
