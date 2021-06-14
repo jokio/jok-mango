@@ -4,8 +4,8 @@
 root = true
 
 [*]
-indent_style = tab
-indent_size = 3
+indent_style = space
+indent_size = 2
 
 # We recommend you to keep these unchanged
 end_of_line = lf

@@ -20,15 +20,14 @@
 		"dist"
 	],
 	"peerDependencies": {
-		"mongodb": "~3.5.9"
+		"mongodb": "3.6.9"
 	},
 	"optionalDependencies": {
 		"fsevents": "2.1.3"
 	},
 	"devDependencies": {
-		"mongodb": "~3.5.9",
 		"@types/jest": "24.0.23",
-		"@types/mongodb": "3.3.10",
+		"@types/mongodb": "3.6.18",
 		"@types/node": "11.11.4",
 		"dotenv": "6.2.0",
 		"jest": "24.5.0",
@@ -36,7 +35,7 @@
 		"ts-jest": "24.0.0",
 		"ts-node": "8.0.3",
 		"tslint": "5.13.1",
-		"typescript": "3.8.3"
+		"typescript": "4.3.2"
 	},
 	"resolutions": {
 		"**/event-stream": "^4.0.1"
