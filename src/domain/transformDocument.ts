@@ -95,27 +95,24 @@ export function prepareFilterQuery<TDocument>(
   let result = filter
 
   if (idMapping) {
-    const { id } = result
+    const { id, ...rest } = result
 
-    result = { ...filter, _id: id }
+    if (id) {
+      result = { ...rest, _id: id }
+    }
   }
 
   if (idTransformation) {
     const { _id } = result
 
-    switch (typeof _id) {
-      case 'string':
-        result = {
-          ...result,
-          _id: new ObjectId(_id),
-        }
-        break
-    }
-
-    if (typeof _id === 'string') {
-      result = {
-        ...result,
-        _id: new ObjectId(_id),
+    if (_id) {
+      switch (typeof _id) {
+        case 'string':
+          result = {
+            ...result,
+            _id: new ObjectId(_id),
+          }
+          break
       }
     }
   }

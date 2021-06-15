@@ -15,7 +15,6 @@ import {
   prepareUpdateQuery,
   transformDocumentBack,
 } from './domain/transformDocument'
-import { MangoLogger } from './types'
 
 interface Options {
   /**
@@ -67,7 +66,7 @@ interface Options {
    *
    * The only exception is when you use `collection` property
    */
-  logger?: MangoLogger | null
+  logger?: MangoLoggerFn | null
 }
 
 /**
@@ -101,7 +100,7 @@ export class MangoRepo<TDocument> {
     }
   }
 
-  async insertOne(doc: Data<TDocument>): Promise<TDocument> {
+  async create(doc: Data<TDocument>): Promise<TDocument> {
     const { session, logger } = this.options
 
     const now = new Date()
@@ -126,13 +125,17 @@ export class MangoRepo<TDocument> {
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'insertOne', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'create',
+        duration,
+      })
     }
 
     return finalResult
   }
 
-  async insertMany(docs: Data<TDocument>[]): Promise<number> {
+  async createMany(docs: Data<TDocument>[]): Promise<number> {
     const { session, logger } = this.options
 
     const now = new Date()
@@ -152,25 +155,36 @@ export class MangoRepo<TDocument> {
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'insertMany', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'createMany',
+        duration,
+      })
     }
 
     return insertedCount
   }
 
-  async count(filterQuery: FilterQuery<TDocument> = {}) {
+  async count(filter: FilterQuery<TDocument> = {}) {
     const { session, logger } = this.options
 
     const now = new Date()
 
-    const result = await this.collection.count(filterQuery, {
+    const finalFilter = prepareFilterQuery(filter, this.options)
+
+    const result = await this.collection.count(finalFilter, {
       session: session ?? undefined,
     })
 
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'count', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'count',
+        filter,
+        duration,
+      })
     }
 
     return result
@@ -180,7 +194,7 @@ export class MangoRepo<TDocument> {
     filter: FilterQuery<TDocument>,
     updateQuery: UpdateQuery<Data<TDocument>>,
     options?: FindOneAndUpdateOption<TDocument>,
-  ): Promise<TDocument> {
+  ): Promise<TDocument | null> {
     const { returnLatestDocumentByDefault, session, logger } =
       this.options
 
@@ -210,15 +224,19 @@ export class MangoRepo<TDocument> {
       throw new Error('MANGO_UPDATE_MANY_FAILED')
     }
 
-    const finalResult = transformDocumentBack<TDocument>(
-      value,
-      this.options,
-    )
+    const finalResult = value
+      ? transformDocumentBack<TDocument>(value, this.options)
+      : null
 
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'updateOne', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'updateOne',
+        filter,
+        duration,
+      })
     }
 
     return finalResult
@@ -260,7 +278,12 @@ export class MangoRepo<TDocument> {
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'updateMany', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'updateMany',
+        filter,
+        duration,
+      })
     }
 
     return modifiedCount
@@ -268,7 +291,7 @@ export class MangoRepo<TDocument> {
 
   async deleteMany(
     filter: FilterQuery<TDocument>,
-    options: CommonOptions,
+    options?: CommonOptions,
   ): Promise<number> {
     const { session, logger } = this.options
 
@@ -291,20 +314,24 @@ export class MangoRepo<TDocument> {
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'deleteMany', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'deleteMany',
+        filter,
+        duration,
+      })
     }
 
     return deletedCount!
   }
 
   async getById(id: string): Promise<TDocument | null> {
-    const { idMapping, idTransformation, session, logger } =
-      this.options
+    const { idTransformation, session, logger } = this.options
 
     const now = new Date()
 
     let value = idTransformation ? new ObjectId(id) : id
-    let filter: any = idMapping ? { _id: value } : { id: value }
+    let filter: any = { _id: value }
 
     const doc = await this.collection.findOne<TDocument>(filter, {
       session: session ?? undefined,
@@ -317,7 +344,11 @@ export class MangoRepo<TDocument> {
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'getById', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'getById',
+        duration,
+      })
     }
 
     return result
@@ -325,7 +356,7 @@ export class MangoRepo<TDocument> {
 
   async query(
     filter: FilterQuery<TDocument>,
-    options: FindOneOptions<TDocument>,
+    options?: FindOneOptions<TDocument>,
   ): Promise<TDocument[]> {
     const { session, logger } = this.options
 
@@ -347,7 +378,12 @@ export class MangoRepo<TDocument> {
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'updateOne', duration)
+      logger({
+        collectionName: this.collectionName,
+        action: 'query',
+        filter,
+        duration,
+      })
     }
 
     return finalResult
@@ -368,3 +404,10 @@ export type MangoDocumentDates = {
   createdAt: Date
   updatedAt?: Date
 }
+
+export type MangoLoggerFn = (data: {
+  collectionName: string
+  action: string
+  filter?: FilterQuery<unknown>
+  duration: number
+}) => void

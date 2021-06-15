@@ -68,5 +68,8 @@
 			"json",
 			"node"
 		]
+	},
+	"dependencies": {
+		"@nrwl/jest": "^12.3.6"
 	}
 }
