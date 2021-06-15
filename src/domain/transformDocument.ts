@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb'
+import { FilterQuery, ObjectId, UpdateQuery } from 'mongodb'
 
 interface Options {
   idMapping: boolean
@@ -64,7 +64,7 @@ export function transformDocumentBack<TDocument>(
   let result = doc as any
 
   if (idTransformation) {
-    const { _id, ...rest } = doc as any
+    const { _id, ...rest } = result
 
     const objectId = _id as ObjectId
 
@@ -75,11 +75,82 @@ export function transformDocumentBack<TDocument>(
   }
 
   if (idMapping) {
-    const { _id, ...rest } = doc as any
+    const { _id, ...rest } = result
 
     result = {
       ...rest,
       id: _id,
+    }
+  }
+
+  return result
+}
+
+export function prepareFilterQuery<TDocument>(
+  filter: FilterQuery<TDocument>,
+  options: Options,
+): FilterQuery<TDocument> {
+  const { idMapping, idTransformation } = options
+
+  let result = filter
+
+  if (idMapping) {
+    const { id } = result
+
+    result = { ...filter, _id: id }
+  }
+
+  if (idTransformation) {
+    const { _id } = result
+
+    switch (typeof _id) {
+      case 'string':
+        result = {
+          ...result,
+          _id: new ObjectId(_id),
+        }
+        break
+    }
+
+    if (typeof _id === 'string') {
+      result = {
+        ...result,
+        _id: new ObjectId(_id),
+      }
+    }
+  }
+
+  return result
+}
+
+export function prepareUpdateQuery<TDocument>(
+  query: UpdateQuery<TDocument>,
+  dateNow: Date,
+  options: Options,
+): FilterQuery<TDocument> {
+  const { docVersioning, docDates } = options
+
+  let result = query
+
+  if (docVersioning) {
+    result = {
+      ...result,
+
+      $inc: {
+        ...(query.$inc as any),
+        version: 1,
+      },
+    }
+  }
+
+  if (docDates) {
+    result = {
+      ...result,
+
+      $set: {
+        ...(query.$set as any),
+        updatedAt: dateNow,
+      },
     }
   }
 

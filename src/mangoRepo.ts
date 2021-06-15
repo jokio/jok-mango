@@ -1,6 +1,18 @@
-import { ClientSession, Db } from 'mongodb'
+import {
+  ClientSession,
+  CommonOptions,
+  Db,
+  FilterQuery,
+  FindOneAndUpdateOption,
+  FindOneOptions,
+  ObjectId,
+  UpdateManyOptions,
+  UpdateQuery,
+} from 'mongodb'
 import {
   prepareDocument,
+  prepareFilterQuery,
+  prepareUpdateQuery,
   transformDocumentBack,
 } from './domain/transformDocument'
 import { MangoLogger } from './types'
@@ -16,26 +28,18 @@ interface Options {
   /**
    * transform ObjectId into string and vice-versa
    *
+   * always applies to the _id field
+   *
    * @default true
    */
   idTransformation?: boolean
-
-  /**
-   * Enables soft delete, record stays in the database and
-   * new field `deletedAt` will be added after deleting the document
-   *
-   * Query will not return soft deleted entries
-   *
-   * @default false
-   */
-  softDeletes?: boolean
 
   /**
    * The latest version of the document will be returned after update
    *
    * @default true
    */
-  returnLatestDocument?: boolean
+  returnLatestDocumentByDefault?: boolean
 
   /**
    * Adds `version: number` to the document and inc's it on every update
@@ -84,8 +88,7 @@ export class MangoRepo<TDocument> {
     const defaultOptions: Required<Options> = {
       idMapping: true,
       idTransformation: true,
-      softDeletes: false,
-      returnLatestDocument: true,
+      returnLatestDocumentByDefault: true,
       docVersioning: false,
       docDates: false,
       logger: null,
@@ -98,7 +101,7 @@ export class MangoRepo<TDocument> {
     }
   }
 
-  async create(doc: Data<TDocument>): Promise<TDocument> {
+  async insertOne(doc: Data<TDocument>): Promise<TDocument> {
     const { session, logger } = this.options
 
     const now = new Date()
@@ -112,7 +115,7 @@ export class MangoRepo<TDocument> {
     )
 
     if (!result.ok || insertedCount !== 1) {
-      throw new Error('CREATE_OPERATION_FAILED')
+      throw new Error('MANGO_CREATE_ONE_FAILED')
     }
 
     const finalResult = transformDocumentBack<TDocument>(
@@ -123,13 +126,13 @@ export class MangoRepo<TDocument> {
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'create', duration)
+      logger(this.collectionName, 'insertOne', duration)
     }
 
     return finalResult
   }
 
-  async createMany(docs: Data<TDocument>[]): Promise<number> {
+  async insertMany(docs: Data<TDocument>[]): Promise<number> {
     const { session, logger } = this.options
 
     const now = new Date()
@@ -143,16 +146,211 @@ export class MangoRepo<TDocument> {
       .insertMany(finalDocs, { session: session ?? undefined })
 
     if (!result.ok || insertedCount !== docs.length) {
-      throw new Error('CREATE_OPERATION_FAILED')
+      throw new Error('MANGO_CREATE_MANY_FAILED')
     }
 
     if (logger) {
       const duration = Date.now() - now.getTime()
 
-      logger(this.collectionName, 'create', duration)
+      logger(this.collectionName, 'insertMany', duration)
     }
 
     return insertedCount
+  }
+
+  async count(filterQuery: FilterQuery<TDocument> = {}) {
+    const { session, logger } = this.options
+
+    const now = new Date()
+
+    const result = await this.collection.count(filterQuery, {
+      session: session ?? undefined,
+    })
+
+    if (logger) {
+      const duration = Date.now() - now.getTime()
+
+      logger(this.collectionName, 'count', duration)
+    }
+
+    return result
+  }
+
+  async updateOne(
+    filter: FilterQuery<TDocument>,
+    updateQuery: UpdateQuery<Data<TDocument>>,
+    options?: FindOneAndUpdateOption<TDocument>,
+  ): Promise<TDocument> {
+    const { returnLatestDocumentByDefault, session, logger } =
+      this.options
+
+    const now = new Date()
+
+    const finalFilter = prepareFilterQuery(filter, this.options)
+
+    const finalUpdateQuery: any = prepareUpdateQuery(
+      updateQuery,
+      now,
+      this.options,
+    )
+
+    const { ok, value } = await this.collection.findOneAndUpdate(
+      finalFilter,
+      finalUpdateQuery,
+      {
+        ...options,
+        session: session ?? undefined,
+        returnDocument: returnLatestDocumentByDefault
+          ? 'after'
+          : 'before',
+      },
+    )
+
+    if (!ok) {
+      throw new Error('MANGO_UPDATE_MANY_FAILED')
+    }
+
+    const finalResult = transformDocumentBack<TDocument>(
+      value,
+      this.options,
+    )
+
+    if (logger) {
+      const duration = Date.now() - now.getTime()
+
+      logger(this.collectionName, 'updateOne', duration)
+    }
+
+    return finalResult
+  }
+
+  async updateMany(
+    filter: FilterQuery<TDocument>,
+    updateQuery: UpdateQuery<Data<TDocument>>,
+    options?: UpdateManyOptions,
+  ): Promise<number> {
+    const { session, logger } = this.options
+
+    const now = new Date()
+
+    const finalFilter = prepareFilterQuery(filter, this.options)
+
+    const finalUpdateQuery: any = prepareUpdateQuery(
+      updateQuery,
+      now,
+      this.options,
+    )
+
+    const {
+      result: { ok },
+      modifiedCount,
+    } = await this.collection.updateMany(
+      finalFilter,
+      finalUpdateQuery,
+      {
+        ...options,
+        session: session ?? undefined,
+      },
+    )
+
+    if (!ok) {
+      throw new Error('MANGO_UPDATE_ONE_FAILED')
+    }
+
+    if (logger) {
+      const duration = Date.now() - now.getTime()
+
+      logger(this.collectionName, 'updateMany', duration)
+    }
+
+    return modifiedCount
+  }
+
+  async deleteMany(
+    filter: FilterQuery<TDocument>,
+    options: CommonOptions,
+  ): Promise<number> {
+    const { session, logger } = this.options
+
+    const now = new Date()
+
+    const finalFilter = prepareFilterQuery(filter, this.options)
+
+    const {
+      result: { ok },
+      deletedCount,
+    } = await this.collection.deleteMany(finalFilter, {
+      ...options,
+      session: session ?? undefined,
+    })
+
+    if (!ok) {
+      throw new Error('MANGO_UPDATE_ONE_FAILED')
+    }
+
+    if (logger) {
+      const duration = Date.now() - now.getTime()
+
+      logger(this.collectionName, 'deleteMany', duration)
+    }
+
+    return deletedCount!
+  }
+
+  async getById(id: string): Promise<TDocument | null> {
+    const { idMapping, idTransformation, session, logger } =
+      this.options
+
+    const now = new Date()
+
+    let value = idTransformation ? new ObjectId(id) : id
+    let filter: any = idMapping ? { _id: value } : { id: value }
+
+    const doc = await this.collection.findOne<TDocument>(filter, {
+      session: session ?? undefined,
+    })
+
+    const result = doc
+      ? transformDocumentBack<TDocument>(doc, this.options)
+      : null
+
+    if (logger) {
+      const duration = Date.now() - now.getTime()
+
+      logger(this.collectionName, 'getById', duration)
+    }
+
+    return result
+  }
+
+  async query(
+    filter: FilterQuery<TDocument>,
+    options: FindOneOptions<TDocument>,
+  ): Promise<TDocument[]> {
+    const { session, logger } = this.options
+
+    const now = new Date()
+
+    const finalFilter = prepareFilterQuery(filter, this.options)
+
+    const result = await this.collection
+      .find(finalFilter, {
+        ...options,
+        session: session ?? undefined,
+      })
+      .toArray()
+
+    const finalResult: TDocument[] = result.map(x =>
+      transformDocumentBack(x, this.options),
+    )
+
+    if (logger) {
+      const duration = Date.now() - now.getTime()
+
+      logger(this.collectionName, 'updateOne', duration)
+    }
+
+    return finalResult
   }
 }
 

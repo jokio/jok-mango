@@ -1,24 +1,41 @@
 import getClient from '../common/getClient'
-import {
-	MangoDocumentDates,
-	MangoDocumentVersion,
-	MangoRepo,
-} from '../mangoRepo'
-
-type User = MangoDocumentVersion &
-	MangoDocumentDates & {
-		nickname: string
-	}
+import { MangoRepo } from '../mangoRepo'
 
 describe('mangoRepo', () => {
-	it('should work', async () => {
-		const client = await getClient('')
+  describe('basic', () => {
+    type User = {
+      id: string
+      nickname: string
+    }
 
-		const repo = new MangoRepo<User>(client.db(), 'test', {
-			docVersioning: true,
-			docDates: true,
-		})
+    it('should create new entry', async () => {
+      const client = await getClient('')
 
-		// const repo.create({nickname})
-	})
+      const repo = new MangoRepo<User>(client.db(), 'test')
+
+      const nickname = 'ezeki'
+
+      const result = await repo.insertOne({ nickname })
+
+      expect(result).toBeTruthy()
+      expect(result.id).toBeTruthy()
+      expect(result.nickname).toBe(nickname)
+    })
+  })
+
+  describe('feature: idMapping', () => {})
+
+  describe('feature: idTransformation', () => {})
+
+  describe('feature: idMapping with idTransformation', () => {})
+
+  describe('feature: returnLatestDocumentByDefault', () => {})
+
+  describe('feature: docVersioning', () => {})
+
+  describe('feature: docDates', () => {})
+
+  describe('feature: session (transaction)', () => {})
+
+  describe('feature: logger', () => {})
 })
