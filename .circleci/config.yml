@@ -7,7 +7,6 @@ jobs:
       - checkout
       - run: sudo yarn global add semantic-release
       - run: yarn install --ignore-optional
-      - run: yarn lint
       - run: yarn test-ci
       - run: yarn add codecov
       - run: ./node_modules/.bin/codecov
