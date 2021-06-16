@@ -7,9 +7,9 @@ jobs:
       - checkout
       - run: sudo yarn global add semantic-release
       - run: npm i
-      - run: npm run test-ci
-      - run: npm i codecov
-      - run: ./node_modules/.bin/codecov
+      # - run: npm run test-ci
+      # - run: npm i codecov
+      # - run: ./node_modules/.bin/codecov
       - run: semantic-release
 
 workflows:
