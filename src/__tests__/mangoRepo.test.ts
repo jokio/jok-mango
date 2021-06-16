@@ -1,4 +1,4 @@
-import { Db } from 'mongodb'
+import { Db, MongoClient } from 'mongodb'
 import { getClient } from '../common/getClient'
 import {
   MangoDocumentDates,
@@ -7,13 +7,12 @@ import {
 } from '../mangoRepo'
 
 describe('mangoRepo', () => {
+  let client: MongoClient
   let db: Db
   const collectionName = 'test'
 
   beforeAll(async () => {
-    const client = await getClient(
-      'mongodb://localhost:27017/mango-test',
-    )
+    client = await getClient('mongodb://localhost:27017/mango-test')
 
     db = client.db()
 
@@ -22,6 +21,8 @@ describe('mangoRepo', () => {
 
   afterAll(async () => {
     await db.dropCollection(collectionName)
+
+    await client.close(true)
   })
 
   describe('basic', () => {

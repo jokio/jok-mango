@@ -1,3 +1,4 @@
+import { MongoClient } from 'mongodb'
 import { getClient } from '../common/getClient'
 import { MangoDbContext } from '../mangoDbContext'
 import { MangoRepo } from '../mangoRepo'
@@ -23,19 +24,22 @@ describe('MangoDbContext', () => {
     })
   }
 
+  let client: MongoClient
   let db: DbContext
 
   beforeAll(async () => {
-    const client = await getClient(
-      'mongodb://localhost:27017/mango-test',
-    )
+    client = await getClient('mongodb://localhost:27017/mango-test')
 
     db = new DbContext(client.db())
 
     await db.createCollections()
   })
 
-  afterAll(() => db.deleteCollections())
+  afterAll(async () => {
+    await db.deleteCollections()
+
+    await client.close(true)
+  })
 
   it('should create game and user', async () => {
     const user = await db.users.create({ name: 'User 1' })
