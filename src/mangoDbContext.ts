@@ -32,7 +32,7 @@ export abstract class MangoDbContext<
     return Promise.all(tasks)
   }
 
-  deleteCollections() {
+  dropCollections() {
     const names = Object.values(this.collectionNames)
     if (!names.length) {
       return

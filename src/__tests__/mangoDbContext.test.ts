@@ -36,7 +36,7 @@ describe('MangoDbContext', () => {
   })
 
   afterAll(async () => {
-    await db.deleteCollections()
+    await db.dropCollections()
 
     await client.close(true)
   })
