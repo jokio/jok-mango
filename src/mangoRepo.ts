@@ -16,7 +16,7 @@ import {
   transformDocumentBack,
 } from './domain/transformDocument'
 
-interface Options {
+export interface MangoRepoOptions {
   /**
    * move `_id` value into `id` field
    *
@@ -73,7 +73,7 @@ interface Options {
  * Repository to work with mongodb
  */
 export class MangoRepo<TDocument> {
-  protected options: Required<Options>
+  protected options: Required<MangoRepoOptions>
 
   get collection() {
     return this.db.collection<TDocument>(this.collectionName)
@@ -82,9 +82,9 @@ export class MangoRepo<TDocument> {
   constructor(
     protected db: Db,
     protected collectionName: string,
-    options?: Options,
+    options?: MangoRepoOptions,
   ) {
-    const defaultOptions: Required<Options> = {
+    const defaultOptions: Required<MangoRepoOptions> = {
       idMapping: true,
       idTransformation: true,
       returnLatestDocumentByDefault: true,
@@ -100,7 +100,9 @@ export class MangoRepo<TDocument> {
     }
   }
 
-  async create(doc: Data<TDocument>): Promise<TDocument> {
+  async create(
+    doc: WithOptionalId<Data<TDocument>>,
+  ): Promise<TDocument> {
     const { session, logger } = this.options
 
     const now = new Date()
@@ -135,7 +137,9 @@ export class MangoRepo<TDocument> {
     return finalResult
   }
 
-  async createMany(docs: Data<TDocument>[]): Promise<number> {
+  async createMany(
+    docs: WithOptionalId<Data<TDocument>>[],
+  ): Promise<number> {
     const { session, logger } = this.options
 
     const now = new Date()
@@ -172,7 +176,7 @@ export class MangoRepo<TDocument> {
 
     const finalFilter = prepareFilterQuery(filter, this.options)
 
-    const result = await this.collection.count(finalFilter, {
+    const result = await this.collection.countDocuments(finalFilter, {
       session: session ?? undefined,
     })
 
@@ -411,3 +415,5 @@ export type MangoLoggerFn = (data: {
   filter?: FilterQuery<unknown>
   duration: number
 }) => void
+
+export type WithOptionalId<T> = T & { id?: string | ObjectId }
