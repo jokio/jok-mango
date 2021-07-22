@@ -216,11 +216,11 @@ export class MangoRepo<TDocument> {
       finalFilter,
       finalUpdateQuery,
       {
-        ...options,
-        session: session ?? undefined,
         returnDocument: returnLatestDocumentByDefault
           ? 'after'
           : 'before',
+        session: session ?? undefined,
+        ...options,
       },
     )
 
@@ -270,8 +270,8 @@ export class MangoRepo<TDocument> {
       finalFilter,
       finalUpdateQuery,
       {
-        ...options,
         session: session ?? undefined,
+        ...options,
       },
     )
 
@@ -307,8 +307,8 @@ export class MangoRepo<TDocument> {
       result: { ok },
       deletedCount,
     } = await this.collection.deleteMany(finalFilter, {
-      ...options,
       session: session ?? undefined,
+      ...options,
     })
 
     if (!ok) {
@@ -370,8 +370,8 @@ export class MangoRepo<TDocument> {
 
     const result = await this.collection
       .find(finalFilter, {
-        ...options,
         session: session ?? undefined,
+        ...options,
       })
       .toArray()
 
@@ -392,6 +392,8 @@ export class MangoRepo<TDocument> {
 
     return finalResult
   }
+
+  // TODO: create static function which will apply Dates & Version types
 }
 
 // helper types
