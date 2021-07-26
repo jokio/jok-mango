@@ -113,11 +113,37 @@ export function prepareFilterQuery<TDocument>(
             _id: new ObjectId(_id),
           }
           break
+
+        case 'object':
+          {
+            result = {
+              ...result,
+              _id: Object.fromEntries(
+                Object.entries(_id).map(([key, value]) => [
+                  key,
+                  value
+                    ? Array.isArray(value)
+                      ? value.map(x => mapToObjectId(x))
+                      : mapToObjectId(value)
+                    : value,
+                ]),
+              ),
+            }
+          }
+          break
       }
     }
   }
 
   return result
+}
+
+function mapToObjectId(value: unknown) {
+  if (typeof value === 'string' && value.length === 24) {
+    return new ObjectId(value)
+  }
+
+  return value
 }
 
 export function prepareUpdateQuery<TDocument>(

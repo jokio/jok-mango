@@ -1,4 +1,4 @@
-import { Db, MongoClient } from 'mongodb'
+import { Db, MongoClient, ObjectId } from 'mongodb'
 import { getClient } from '../common/getClient'
 import {
   MangoDocumentDates,
@@ -165,6 +165,27 @@ describe('mangoRepo', () => {
       expect(count17).toBe(3)
       expect(count19).toBe(1)
       expect(count20).toBe(0)
+    })
+
+    it('should query documents by _id filter (complex)', async () => {
+      const repo = new MangoRepo<User>(db, collectionName)
+
+      const id1 = new ObjectId().toHexString()
+      const id2 = new ObjectId().toHexString()
+
+      const createdCount = await repo.createMany([
+        { id: id1, nickname: 'U1', age: 31 },
+        { id: id2, nickname: 'U2', age: 31 },
+        { nickname: 'U3', age: 31 },
+        { nickname: 'U3', age: 30 },
+      ])
+
+      const count1 = await repo.count({ id: { $in: [id1] } })
+      const count2 = await repo.count({ id: { $in: [id1, id2] } })
+
+      expect(createdCount).toBe(4)
+      expect(count1).toBe(1)
+      expect(count2).toBe(2)
     })
   })
 
