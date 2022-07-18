@@ -1,14 +1,7 @@
 import { MongoClient } from 'mongodb'
 
-export async function getClient(
-  connectionString: string,
-  poolSize = 20,
-) {
-  const client = new MongoClient(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    poolSize,
-  })
+export async function getClient(connectionString: string) {
+  const client = new MongoClient(connectionString, {})
 
   return client.connect()
 }

@@ -36,7 +36,7 @@ describe('mangoRepo', () => {
     it('should create new entry', async () => {
       const repo = new MangoRepo<User>(db, collectionName)
 
-      const nickname = 'ezeki'
+      const nickname = 'ezekix'
 
       const result = await repo.create({ nickname })
 

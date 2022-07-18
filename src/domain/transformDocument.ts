@@ -1,4 +1,4 @@
-import { FilterQuery, ObjectId, UpdateQuery } from 'mongodb'
+import { Filter, ObjectId, UpdateFilter } from 'mongodb'
 
 interface Options {
   idMapping: boolean
@@ -87,9 +87,9 @@ export function transformDocumentBack<TDocument>(
 }
 
 export function prepareFilterQuery<TDocument>(
-  filter: FilterQuery<TDocument>,
+  filter: Filter<TDocument>,
   options: Options,
-): FilterQuery<TDocument> {
+): Filter<TDocument> {
   const { idMapping, idTransformation } = options
 
   let result = filter
@@ -119,7 +119,7 @@ export function prepareFilterQuery<TDocument>(
             result = {
               ...result,
               _id: Object.fromEntries(
-                Object.entries(_id).map(([key, value]) => [
+                Object.entries(_id as any).map(([key, value]) => [
                   key,
                   value
                     ? Array.isArray(value)
@@ -147,10 +147,10 @@ function mapToObjectId(value: unknown) {
 }
 
 export function prepareUpdateQuery<TDocument>(
-  query: UpdateQuery<TDocument>,
+  query: UpdateFilter<TDocument>,
   dateNow: Date,
   options: Options,
-): FilterQuery<TDocument> {
+): Filter<TDocument> {
   const { docVersioning, docDates } = options
 
   let result = query
