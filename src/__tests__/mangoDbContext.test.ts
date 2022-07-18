@@ -16,11 +16,18 @@ describe('MangoDbContext', () => {
 
     async initializeDbData() {}
 
-    users = new MangoRepo<User>(this.db, this.collectionNames.users)
+    users = new MangoRepo<User>(
+      () => this.db,
+      this.collectionNames.users,
+    )
 
-    games = new MangoRepo<User>(this.db, this.collectionNames.games, {
-      idTransformation: false,
-    })
+    games = new MangoRepo<User>(
+      () => this.db,
+      this.collectionNames.games,
+      {
+        idTransformation: false,
+      },
+    )
   }
 
   let client: MongoClient

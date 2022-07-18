@@ -35,7 +35,7 @@ describe('mangoRepo', () => {
     }
 
     it('should create new entry', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const nickname = 'ezeki'
 
@@ -47,7 +47,7 @@ describe('mangoRepo', () => {
     })
 
     it('should create many entries', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const count = await repo.createMany([
         { nickname: 'u1' },
@@ -58,7 +58,7 @@ describe('mangoRepo', () => {
     })
 
     it('should update entry', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const item = await repo.create({ nickname: 'EZ' })
 
@@ -83,7 +83,7 @@ describe('mangoRepo', () => {
     })
 
     it('should update many entries', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const createdCount = await repo.createMany([
         { nickname: 'U1', age: 20 },
@@ -100,7 +100,7 @@ describe('mangoRepo', () => {
     })
 
     it('should delete many entries', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const createdCount = await repo.createMany([
         { nickname: 'U1', age: 18 },
@@ -114,7 +114,7 @@ describe('mangoRepo', () => {
     })
 
     it('should query documents count', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const createdCount = await repo.createMany([
         { nickname: 'U1', age: 17 },
@@ -134,7 +134,7 @@ describe('mangoRepo', () => {
     })
 
     it('should query document by id', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const item = await repo.create({
         nickname: 'RandomUserName',
@@ -149,7 +149,7 @@ describe('mangoRepo', () => {
     })
 
     it('should query documents by filter', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const createdCount = await repo.createMany([
         { nickname: 'U1', age: 31 },
@@ -169,7 +169,7 @@ describe('mangoRepo', () => {
     })
 
     it('should query documents by _id filter (complex)', async () => {
-      const repo = new MangoRepo<User>(db, collectionName)
+      const repo = new MangoRepo<User>(() => db, collectionName)
 
       const id1 = new ObjectId().toHexString()
       const id2 = new ObjectId().toHexString()
@@ -201,7 +201,7 @@ describe('mangoRepo', () => {
     let repo: MangoRepo<User>
 
     beforeAll(() => {
-      repo = new MangoRepo<User>(db, collectionName, {
+      repo = new MangoRepo<User>(() => db, collectionName, {
         idMapping: true,
         idTransformation: false,
       })
@@ -277,7 +277,7 @@ describe('mangoRepo', () => {
     let repo: MangoRepo<User>
 
     beforeAll(() => {
-      repo = new MangoRepo<User>(db, collectionName, {
+      repo = new MangoRepo<User>(() => db, collectionName, {
         idMapping: false,
         idTransformation: true,
       })
@@ -353,7 +353,7 @@ describe('mangoRepo', () => {
     let repo: MangoRepo<User>
 
     beforeAll(() => {
-      repo = new MangoRepo<User>(db, collectionName, {
+      repo = new MangoRepo<User>(() => db, collectionName, {
         idMapping: true,
         idTransformation: true,
       })
@@ -427,7 +427,7 @@ describe('mangoRepo', () => {
     }
 
     it('should return the original document after update', async () => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         returnLatestDocumentByDefault: false,
       })
 
@@ -442,7 +442,7 @@ describe('mangoRepo', () => {
     })
 
     it('should return the updated document after update', async () => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         returnLatestDocumentByDefault: true,
       })
 
@@ -469,7 +469,7 @@ describe('mangoRepo', () => {
     let repo: MangoRepo<User>
 
     beforeAll(() => {
-      repo = new MangoRepo<User>(db, collectionName, {
+      repo = new MangoRepo<User>(() => db, collectionName, {
         docVersioning: true,
       })
     })
@@ -517,7 +517,7 @@ describe('mangoRepo', () => {
     let repo: MangoRepo<User>
 
     beforeAll(() => {
-      repo = new MangoRepo<User>(db, collectionName, {
+      repo = new MangoRepo<User>(() => db, collectionName, {
         docDates: true,
       })
     })
@@ -576,7 +576,7 @@ describe('mangoRepo', () => {
     }
 
     it('should log create call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         logger: ({ collectionName: name, action }) => {
           expect(name).toBe(collectionName)
           expect(action).toBe('create')
@@ -589,7 +589,7 @@ describe('mangoRepo', () => {
     })
 
     it('should log createMany call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         logger: ({ collectionName: name, action }) => {
           expect(name).toBe(collectionName)
           expect(action).toBe('createMany')
@@ -602,7 +602,7 @@ describe('mangoRepo', () => {
     })
 
     it('should log updateOne call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         logger: ({ collectionName: name, action, filter }) => {
           expect(name).toBe(collectionName)
           expect(action).toBe('updateOne')
@@ -616,7 +616,7 @@ describe('mangoRepo', () => {
     })
 
     it('should log updateMany call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         logger: ({ collectionName: name, action, filter }) => {
           expect(name).toBe(collectionName)
           expect(action).toBe('updateMany')
@@ -630,7 +630,7 @@ describe('mangoRepo', () => {
     })
 
     it('should log count call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         logger: ({ collectionName: name, action, filter }) => {
           expect(name).toBe(collectionName)
           expect(action).toBe('count')
@@ -644,7 +644,7 @@ describe('mangoRepo', () => {
     })
 
     it('should log getById call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         idTransformation: false,
         logger: ({ collectionName: name, action }) => {
           expect(name).toBe(collectionName)
@@ -658,7 +658,7 @@ describe('mangoRepo', () => {
     })
 
     it('should log query call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         logger: ({ collectionName: name, action, filter }) => {
           expect(name).toBe(collectionName)
           expect(action).toBe('query')
@@ -672,7 +672,7 @@ describe('mangoRepo', () => {
     })
 
     it('should log deleteMany call', done => {
-      const repo = new MangoRepo<User>(db, collectionName, {
+      const repo = new MangoRepo<User>(() => db, collectionName, {
         logger: ({ collectionName: name, action, filter }) => {
           expect(name).toBe(collectionName)
           expect(action).toBe('deleteMany')
