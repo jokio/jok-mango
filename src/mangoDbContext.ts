@@ -1,8 +1,8 @@
 import {
   ClientSession,
+  ClientSessionOptions,
   Db,
   MongoClient,
-  SessionOptions,
   TransactionOptions,
 } from 'mongodb'
 
@@ -71,7 +71,7 @@ export abstract class MangoDbContextWithTransaction<
     }
 
     const session = this.client.startSession(
-      options && options.sessionOptions,
+      (options && options.sessionOptions) ?? {},
     )
 
     try {
@@ -91,10 +91,12 @@ export abstract class MangoDbContextWithTransaction<
   }
 }
 
-export type TransactionAction<T, TDbContext extends MangoDbContext> =
-  (db: TDbContext) => Promise<T>
+export type TransactionAction<
+  T,
+  TDbContext extends MangoDbContext,
+> = (db: TDbContext) => Promise<T>
 
 export interface RunTransactionOptions {
-  sessionOptions?: SessionOptions
+  sessionOptions?: ClientSessionOptions
   transactionOptions?: TransactionOptions
 }
