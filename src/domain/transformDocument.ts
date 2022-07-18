@@ -92,7 +92,7 @@ export function prepareFilterQuery<TDocument>(
 ): Filter<TDocument> {
   const { idMapping, idTransformation } = options
 
-  let result = filter
+  let result = filter as any
 
   if (idMapping) {
     const { id, ...rest } = result
