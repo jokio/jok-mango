@@ -20,7 +20,7 @@
     "dist"
   ],
   "peerDependencies": {
-    "mongodb": "4.2.2"
+    "mongodb": "4.8.0"
   },
   "optionalDependencies": {
     "fsevents": "2.1.3"
