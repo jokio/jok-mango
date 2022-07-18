@@ -1,13 +1,13 @@
 import {
   ClientSession,
-  CommonOptions,
   Db,
-  FilterQuery,
-  FindOneAndUpdateOption,
-  FindOneOptions,
+  DeleteOptions,
+  Filter,
+  FindOneAndUpdateOptions,
+  FindOptions,
   ObjectId,
-  UpdateManyOptions,
-  UpdateQuery,
+  UpdateFilter,
+  UpdateOptions,
 } from 'mongodb'
 import {
   prepareDocument,
@@ -110,12 +110,12 @@ export class MangoRepo<TDocument> {
     // prepare final document
     const finalDoc: any = prepareDocument(doc, now, this.options)
 
-    const { result, insertedCount } = await this.collection.insertOne(
+    const { acknowledged } = await this.collection.insertOne(
       finalDoc,
       { session: session ?? undefined },
     )
 
-    if (!result.ok || insertedCount !== 1) {
+    if (!acknowledged) {
       throw new Error('MANGO_CREATE_ONE_FAILED')
     }
 
@@ -148,11 +148,11 @@ export class MangoRepo<TDocument> {
       prepareDocument(doc, now, this.options),
     )
 
-    const { result, insertedCount } = await this.db
+    const { acknowledged, insertedCount } = await this.db
       .collection<TDocument>(this.collectionName)
       .insertMany(finalDocs, { session: session ?? undefined })
 
-    if (!result.ok || insertedCount !== docs.length) {
+    if (!acknowledged || insertedCount !== docs.length) {
       throw new Error('MANGO_CREATE_MANY_FAILED')
     }
 
@@ -169,7 +169,7 @@ export class MangoRepo<TDocument> {
     return insertedCount
   }
 
-  async count(filter: FilterQuery<TDocument> = {}) {
+  async count(filter: Filter<TDocument> = {}) {
     const { session, logger } = this.options
 
     const now = new Date()
@@ -195,9 +195,9 @@ export class MangoRepo<TDocument> {
   }
 
   async updateOne(
-    filter: FilterQuery<TDocument>,
-    updateQuery: UpdateQuery<Data<TDocument>>,
-    options?: FindOneAndUpdateOption<TDocument>,
+    filter: Filter<TDocument>,
+    updateQuery: UpdateFilter<Data<TDocument>>,
+    options?: FindOneAndUpdateOptions,
   ): Promise<TDocument | null> {
     const { returnLatestDocumentByDefault, session, logger } =
       this.options
@@ -212,7 +212,7 @@ export class MangoRepo<TDocument> {
       this.options,
     )
 
-    const { ok, value } = await this.collection.findOneAndUpdate(
+    const { value, ok } = await this.collection.findOneAndUpdate(
       finalFilter,
       finalUpdateQuery,
       {
@@ -247,9 +247,9 @@ export class MangoRepo<TDocument> {
   }
 
   async updateMany(
-    filter: FilterQuery<TDocument>,
-    updateQuery: UpdateQuery<Data<TDocument>>,
-    options?: UpdateManyOptions,
+    filter: Filter<TDocument>,
+    updateQuery: UpdateFilter<Data<TDocument>>,
+    options?: UpdateOptions,
   ): Promise<number> {
     const { session, logger } = this.options
 
@@ -263,19 +263,17 @@ export class MangoRepo<TDocument> {
       this.options,
     )
 
-    const {
-      result: { ok },
-      modifiedCount,
-    } = await this.collection.updateMany(
-      finalFilter,
-      finalUpdateQuery,
-      {
-        session: session ?? undefined,
-        ...options,
-      },
-    )
+    const { acknowledged, modifiedCount } =
+      await this.collection.updateMany(
+        finalFilter,
+        finalUpdateQuery,
+        {
+          session: session ?? undefined,
+          ...options,
+        },
+      )
 
-    if (!ok) {
+    if (!acknowledged) {
       throw new Error('MANGO_UPDATE_ONE_FAILED')
     }
 
@@ -294,8 +292,8 @@ export class MangoRepo<TDocument> {
   }
 
   async deleteMany(
-    filter: FilterQuery<TDocument>,
-    options?: CommonOptions,
+    filter: Filter<TDocument>,
+    options?: DeleteOptions,
   ): Promise<number> {
     const { session, logger } = this.options
 
@@ -303,15 +301,13 @@ export class MangoRepo<TDocument> {
 
     const finalFilter = prepareFilterQuery(filter, this.options)
 
-    const {
-      result: { ok },
-      deletedCount,
-    } = await this.collection.deleteMany(finalFilter, {
-      session: session ?? undefined,
-      ...options,
-    })
+    const { acknowledged, deletedCount } =
+      await this.collection.deleteMany(finalFilter, {
+        session: session ?? undefined,
+        ...options,
+      })
 
-    if (!ok) {
+    if (!acknowledged) {
       throw new Error('MANGO_UPDATE_ONE_FAILED')
     }
 
@@ -359,8 +355,8 @@ export class MangoRepo<TDocument> {
   }
 
   async query(
-    filter: FilterQuery<TDocument>,
-    options?: FindOneOptions<TDocument>,
+    filter: Filter<TDocument>,
+    options?: FindOptions<TDocument>,
   ): Promise<TDocument[]> {
     const { session, logger } = this.options
 
@@ -414,7 +410,7 @@ export type MangoDocumentDates = {
 export type MangoLoggerFn = (data: {
   collectionName: string
   action: string
-  filter?: FilterQuery<unknown>
+  filter?: Filter<any>
   duration: number
 }) => void
 
