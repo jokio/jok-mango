@@ -76,11 +76,11 @@ export class MangoRepo<TDocument> {
   protected options: Required<MangoRepoOptions>
 
   get collection() {
-    return this.db.collection<TDocument>(this.collectionName)
+    return this.getDb().collection<TDocument>(this.collectionName)
   }
 
   constructor(
-    protected db: Db,
+    protected getDb: () => Db,
     protected collectionName: string,
     options?: MangoRepoOptions,
   ) {
@@ -148,9 +148,10 @@ export class MangoRepo<TDocument> {
       prepareDocument(doc, now, this.options),
     )
 
-    const { acknowledged, insertedCount } = await this.db
-      .collection<TDocument>(this.collectionName)
-      .insertMany(finalDocs, { session: session ?? undefined })
+    const { acknowledged, insertedCount } =
+      await this.collection.insertMany(finalDocs, {
+        session: session ?? undefined,
+      })
 
     if (!acknowledged || insertedCount !== docs.length) {
       throw new Error('MANGO_CREATE_MANY_FAILED')
