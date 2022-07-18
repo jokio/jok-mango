@@ -1,5 +1,4 @@
 import { MongoClient } from 'mongodb'
-import { getClient } from '../common/getClient'
 import { MangoDbContext } from '../mangoDbContext'
 import { MangoRepo } from '../mangoRepo'
 
@@ -28,7 +27,9 @@ describe('MangoDbContext', () => {
   let db: DbContext
 
   beforeAll(async () => {
-    client = await getClient('mongodb://localhost:27017/mango-test')
+    client = await await new MongoClient(
+      'mongodb://localhost:27017/mango-test',
+    ).connect()
 
     db = new DbContext(client.db())
 

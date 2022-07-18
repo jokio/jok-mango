@@ -1,5 +1,4 @@
 import { Db, MongoClient, ObjectId } from 'mongodb'
-import { getClient } from '../common/getClient'
 import {
   MangoDocumentDates,
   MangoDocumentVersion,
@@ -12,7 +11,9 @@ describe('mangoRepo', () => {
   const collectionName = 'test'
 
   beforeAll(async () => {
-    client = await getClient('mongodb://localhost:27017/mango-test')
+    client = await new MongoClient(
+      'mongodb://localhost:27017/mango-test',
+    ).connect()
 
     db = client.db()
 
